@@ -10,7 +10,7 @@ using System.Security.Policy;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web.Http;
-using System.Web.UI.WebControls;
+using System.Web.UI.WebControls;    
 
 namespace AppWeb.Controllers.ApiBD
 {
@@ -66,123 +66,173 @@ namespace AppWeb.Controllers.ApiBD
         }
         [HttpPost]
         [Route("login")]
-        public async Task<HttpResponseMessage> Login([FromBody] LoginDto datos)
+        public async Task<HttpResponseMessage> Login([FromBody] dynamic datos)
         {
-            try {
-                if (datos.Correo==null || !VerificarRegex(datos.Correo,5))
-                {
-                    return Request.CreateResponse(HttpStatusCode.Ambiguous, "Correo mal escrito");
-                }
-                if (datos.Password ==null || datos.Password.Length<=5)
-                {
-                    return Request.CreateResponse(HttpStatusCode.Ambiguous, "Contraseña incorrecta");
-                }
+            try
+            {
+                string tipo = datos.tipo;
+                string password = datos.password;
 
-            string query = $"select ContrasenaHash from usuarios where correo='{datos.Correo}'";
-            var db = new DataBaseHelper();
-            var Dt = db.SelectTable(query);
-            if (Dt.Rows.Count== 1)
-            {
-                string Hash = Dt.Rows[0]["ContrasenaHash"].ToString();
-                bool esValida = VerifyHashedPassword(Hash, datos.Password);
-                if (esValida)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, "Pasele a lo barrido");
-                }
-                return Request.CreateResponse(HttpStatusCode.Unauthorized, "Credenciales incorrectas");
-            }
-            else
-            {
-                return Request.CreateResponse(HttpStatusCode.Unauthorized, "Errores con usuarios");
-            }
-            }catch(Exception ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.Unauthorized, ex.Message);
-            }
-        }
-        
-        
-        [HttpPost]
-        [Route("Registrar")]
-        public async Task<HttpResponseMessage> Registrar([FromBody] Usuario datos)
-        {
-            try { 
-                if (datos.Correo == null || !VerificarRegex(datos.Correo, 4))
-                {
-                    return Request.CreateResponse(HttpStatusCode.Ambiguous, "Correo mal escrito");
-                }
-                if (datos.Nombre == null || !VerificarRegex(datos.Nombre, 3))
-                {
-                    return Request.CreateResponse(HttpStatusCode.Ambiguous, "Nombre mal escrito");
-                }
-                if (datos.Contrasena == null || datos.Contrasena.Length <= 5)
-                {
-                    return Request.CreateResponse(HttpStatusCode.Ambiguous, "Contraseña incorrecta");
-                }
-                if (datos.Moneda == null || !VerificarRegex(datos.Moneda, 1))
-                {
-                    return Request.CreateResponse(HttpStatusCode.Ambiguous, "Moneda Incorrecta");
-                }
-                if (datos.Lenguaje == null || !VerificarRegex(datos.Lenguaje, 5))
-                {
-                    return Request.CreateResponse(HttpStatusCode.Ambiguous, "Lenguaje Incorrecta");
-                }
-                //subir a base de datos
+                if (string.IsNullOrEmpty(tipo) || string.IsNullOrEmpty(password))
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, "Datos incompletos");
+
                 var db = new DataBaseHelper();
-                string Tabla="Usuarios";
-                bool existe = db.Exists($"select top 1 Nombre from {Tabla} where correo='{datos.Correo}'");
-                Respuesta regresar= new Respuesta();
-                if (existe)
-                {
-                    regresar = new Respuesta
-                    {
-                        Mensaje = "El correo ya existe",
-                        Codigo = 409
-                    };
-                    return Request.CreateResponse(HttpStatusCode.Conflict,regresar);
-                }
-                var hash = Hash(datos.Contrasena);
-                datos.ContrasenaHash = hash;
-                Dictionary<string, object> data= new Dictionary<string, object>
-                {
-                    { "Nombre", datos.Nombre },
-                    { "Correo", datos.Correo },
-                    { "ContrasenaHash", datos.ContrasenaHash },
-                    { "MonedaId", datos.Moneda },
-                    { "Lenguaje", datos.Lenguaje }
-                };
-            var Respuesta= db.InsertRow(Tabla, data);
 
-                if (Respuesta)
+                if (tipo == "alumno")
                 {
-                    regresar = new Respuesta
+                    string matricula = datos.matricula;
+                    if (string.IsNullOrEmpty(matricula))
+                        return Request.CreateResponse(HttpStatusCode.BadRequest, "Matrícula requerida");
+
+                    var dt = db.SelectTable($"SELECT * FROM Alumno WHERE matricula='{matricula}'");
+                    if (dt.Rows.Count == 1)
                     {
-                        Mensaje = "Cuenta Creada Exitosamente",
-                        Codigo = 200
-                    };
-                    return Request.CreateResponse(HttpStatusCode.OK,regresar);
+                        string hash = dt.Rows[0]["Pass"].ToString();
+                        if (VerifyHashedPassword(hash, password))
+                        {
+                            // Devuelve datos para sessionStorage
+                            var result = new
+                            {
+                                logueado = true,
+                                tipo = "alumno",
+                                nombre = dt.Rows[0]["nombre"].ToString()
+                            };
+                            return Request.CreateResponse(HttpStatusCode.OK, result);
+                        }
+                        else
+                        {
+                            return Request.CreateResponse(HttpStatusCode.Unauthorized, "Contraseña incorrecta");
+                        }
+                    }
+                    else
+                    {
+                        return Request.CreateResponse(HttpStatusCode.Unauthorized, "Alumno no encontrado");
+                    }
+                }
+                else if (tipo == "empleado")
+                {
+                    string numEmpleado = datos.numEmpleado;
+                    string correo = datos.correo;
+                    if (string.IsNullOrEmpty(numEmpleado) || string.IsNullOrEmpty(correo))
+                        return Request.CreateResponse(HttpStatusCode.BadRequest, "Datos de empleado incompletos");
+
+                    var dt = db.SelectTable($"SELECT * FROM empleado WHERE num_empleado='{numEmpleado}' AND correo='{correo}'");
+                    if (dt.Rows.Count == 1)
+                    {
+                        string hash = dt.Rows[0]["Pass"].ToString();
+                        if (VerifyHashedPassword(hash, password))
+                        {
+                            var result = new
+                            {
+                                logueado = true,
+                                tipo = "empleado",
+                                nombre = dt.Rows[0]["nombre"].ToString()
+                            };
+                            return Request.CreateResponse(HttpStatusCode.OK, result);
+                        }
+                        else
+                        {
+                            return Request.CreateResponse(HttpStatusCode.Unauthorized, "Contraseña incorrecta");
+                        }
+                    }
+                    else
+                    {
+                        return Request.CreateResponse(HttpStatusCode.Unauthorized, "Empleado no encontrado");
+                    }
                 }
                 else
                 {
-                    regresar = new Respuesta
-                    {
-                        Mensaje = "Error al registrar el usuario",
-                        Codigo = 500
-                    };
-                    return Request.CreateResponse(HttpStatusCode.InternalServerError, regresar);
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, "Tipo de usuario no válido");
                 }
-                
             }
             catch (Exception ex)
             {
-                Respuesta regresar = new Respuesta
-                    {
-                        Mensaje = ex.Message.ToString(),
-                        Codigo = 500
-                };
-                return Request.CreateResponse(HttpStatusCode.InternalServerError, regresar);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, ex.Message);
             }
         }
+
+
+
+
+
+        [HttpPost]
+        [Route("RegistrarPersona")]
+        public async Task<HttpResponseMessage> RegistrarPersona([FromBody] dynamic datos)
+        {
+            try
+            {
+                string tipo = datos.TipoUsuario;
+                string Pass= datos.Password;
+                if (tipo == "alumno")
+                {
+                    string nombre = datos.Nombre;
+                    string matricula = datos.Matricula;
+                    string foto = datos.Foto;
+
+                    // Validaciones básicas
+                    if (string.IsNullOrEmpty(nombre) || string.IsNullOrEmpty(matricula) || string.IsNullOrEmpty(foto))
+                        return Request.CreateResponse(HttpStatusCode.BadRequest, "Datos incompletos");
+
+                    var db = new DataBaseHelper();
+                    // Verifica si ya existe la matrícula
+                    bool existe = db.Exists($"SELECT 1 FROM Alumno WHERE matricula='{matricula}'");
+                    if (existe)
+                        return Request.CreateResponse(HttpStatusCode.Conflict, "La matrícula ya existe");
+                    string Contra = Hash(Pass);
+                    var data = new Dictionary<string, object>
+            {
+                { "nombre", nombre },
+                { "matricula", matricula },
+                { "foto", foto },
+                { "Pass", Contra }
+            };
+                    bool insertado = db.InsertRow("Alumno", data);
+                    if (insertado)
+                        return Request.CreateResponse(HttpStatusCode.OK, "Alumno registrado");
+                    else
+                        return Request.CreateResponse(HttpStatusCode.InternalServerError, "Error al registrar alumno");
+                }
+                else if (tipo == "empleado")
+                {
+                    string nombre = datos.Nombre;
+                    string numEmpleado = datos.NumEmpleado;
+                    string tipoEmpleado = datos.TipoEmpleado;
+                    string foto = datos.Foto;
+
+                    if (string.IsNullOrEmpty(nombre) || string.IsNullOrEmpty(numEmpleado) || string.IsNullOrEmpty(tipoEmpleado) || string.IsNullOrEmpty(foto))
+                        return Request.CreateResponse(HttpStatusCode.BadRequest, "Datos incompletos");
+
+                    var db = new DataBaseHelper();
+                    // Verifica si ya existe el número de empleado
+                    bool existe = db.Exists($"SELECT 1 FROM empleado WHERE num_empleado='{numEmpleado}'");
+                    if (existe)
+                        return Request.CreateResponse(HttpStatusCode.Conflict, "El número de empleado ya existe");
+                    string Contra = Hash(Pass);
+                    var data = new Dictionary<string, object>
+            {
+                { "nombre", nombre },
+                { "num_empleado", numEmpleado },
+                { "tipo_empleado", tipoEmpleado },
+                { "foto", foto },
+                { "Pass", Contra }
+            };
+                    bool insertado = db.InsertRow("empleado", data);
+                    if (insertado)
+                        return Request.CreateResponse(HttpStatusCode.OK, "Empleado registrado");
+                    else
+                        return Request.CreateResponse(HttpStatusCode.InternalServerError, "Error al registrar empleado");
+                }
+                else
+                {
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, "Tipo de usuario no válido");
+                }
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, ex.Message);
+            }
+        }
+
         public static string Hash(string textoPlano)
         {
             byte[] salt;
@@ -231,16 +281,6 @@ namespace AppWeb.Controllers.ApiBD
         }
     }
 
-}
-public class LoginDto
-{
-    public string Correo { get; set; }
-    public string Password { get; set; }
-}
-public class RegistrarDto
-{
-    public string Correo { get; set; }
-    public string Password { get; set; }
 }
 public class Usuario
 {

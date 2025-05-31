@@ -7,11 +7,24 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title><%: Page.Title %> - Cuentas</title>
+    <title><%: Page.Title %> - Administrador</title>
     <asp:PlaceHolder runat="server">
         <%: Scripts.Render("~/bundles/modernizr") %>
     </asp:PlaceHolder>
+    <script>
+        function logout() {
+            sessionStorage.removeItem("logueado");
+            window.location.href = "Default.aspx";
+        }
+        const Nombre = sessionStorage.setItem("nombre");
+        window.onload = function () {
+            var nombre = sessionStorage.getItem("nombre");
+            if (nombre) {
+                document.getElementById("nombreUsuario").textContent = nombre;
+            }
+        };
 
+    </script>
     <webopt:bundlereference runat="server" path="~/Content/css" />
 
 </head>
@@ -38,7 +51,7 @@
 
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-dark">
             <div class="container">
-                <a class="navbar-brand" runat="server" href="~/">Cuentas Personales</a>
+                <a class="navbar-brand" runat="server" href="~/">Administrador</a>
                 <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" title="Alternar navegación" aria-controls="navbarSupportedContent"
                     aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -48,6 +61,8 @@
                         <li class="nav-item"><a class="nav-link" runat="server" href="~/">Inicio</a></li>
                         <li class="nav-item"><a class="nav-link" runat="server" href="~/About">Acerca de</a></li>
                         <li class="nav-item"><a class="nav-link" runat="server" href="~/Contact">Contacto</a></li>
+                        <li class="nav-item"><span id="nombreUsuario" class="nav-link" style="font-weight:bold;"></span></li>
+                        <li class="nav-item"><a class="nav-link" runat="server" onclick="logout()">Salir</a></li>
                     </ul>
                 </div>
             </div>

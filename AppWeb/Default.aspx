@@ -31,24 +31,40 @@
         }
 
         async function login() {
-            const correo = document.getElementById("correo").value;
-            const password = document.getElementById("password").value;
+            const tipo = document.getElementById("TipoLogin").value;
+            let datos = { tipo };
+
+            if (tipo === "alumno") {
+                datos.matricula = document.getElementById("matriculaLogin").value;
+            } else if (tipo === "empleado") {
+                datos.numEmpleado = document.getElementById("numEmpleadoLogin").value;
+                datos.correo = document.getElementById("correo").value;
+            } else {
+                alert("Selecciona un tipo de usuario");
+                return;
+            }
+            datos.password = document.getElementById("password").value;
 
             const response = await fetch('/api/Main/login', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ correo, password })
+                body: JSON.stringify(datos)
             });
 
             if (response.ok) {
                 const data = await response.json();
-                console.log(response)
+                sessionStorage.setItem("logueado", data.logueado ? "1" : "0");
+                sessionStorage.setItem("tipo", data.tipo);
+                sessionStorage.setItem("nombre", data.nombre);
+                window.location.reload();
                 alert("Bienvenido");
-                // Puedes guardar el token si tu API lo devuelve
+                window.location.href = "About.aspx";
             } else {
-                alert("Correo o contraseña incorrectos");
+                alert("Datos incorrectos");
             }
+
         }
+
 
         async function registrar() {
             const Nombre = document.getElementById("NombreMandar").value;
@@ -79,13 +95,94 @@
             const response = await fetch('/api/Main/VerificarRegex', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: {palabra,Tipo  }
+                body: { palabra, Tipo }
             });
             if (response.ok) {
                 const data = await response.json();
                 console.log(data)
                 // Puedes guardar el token si tu API lo devuelve
             }
+        }
+        function mostrarCampos() {
+            const tipo = document.getElementById("TipoUsuario").value;
+            document.getElementById("CamposNombre").style.display = tipo ? "block" : "none";
+            document.getElementById("CamposMatricula").style.display = tipo === "alumno" ? "block" : "none";
+            document.getElementById("CamposEmpleado").style.display = tipo === "empleado" ? "block" : "none";
+            document.getElementById("CamposFoto").style.display = tipo ? "block" : "none";
+            document.getElementById("CamposPasswordRegistro").style.display = tipo ? "block" : "none";
+            document.getElementById("CamposConfirmarPassword").style.display = tipo ? "block" : "none";
+        }
+
+
+        // Convierte la imagen seleccionada a base64
+        function getBase64FromFile(input) {
+            return new Promise((resolve, reject) => {
+                const file = input.files[0];
+                if (!file) {
+                    resolve("");
+                    return;
+                }
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    resolve(e.target.result.split(',')[1]); // Solo la parte base64
+                };
+                reader.onerror = function (e) {
+                    reject(e);
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        async function registrarPersona() {
+            const tipo = document.getElementById("TipoUsuario").value;
+            const nombre = document.getElementById("NombreMandar").value;
+            const fotoInput = document.getElementById("FotoMandar");
+            const fotoBase64 = await getBase64FromFile(fotoInput);
+
+            const password = document.getElementById("PasswordRegistro").value;
+            const confirmarPassword = document.getElementById("ConfirmarPasswordRegistro").value;
+
+            if (password !== confirmarPassword) {
+                alert("Las contraseñas no coinciden");
+                return;
+            }
+
+            let datos = { TipoUsuario: tipo, Nombre: nombre, Foto: fotoBase64, Password: password };
+
+            if (tipo === "alumno") {
+                datos.Matricula = document.getElementById("MatriculaMandar").value;
+            } else if (tipo === "empleado") {
+                datos.NumEmpleado = document.getElementById("NumEmpleadoMandar").value;
+                datos.TipoEmpleado = document.getElementById("TipoEmpleadoMandar").value;
+            } else {
+                alert("Selecciona un tipo de usuario");
+                return;
+            }
+
+            fetch('/api/Main/RegistrarPersona', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(datos)
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.Codigo === 200 || data === "Alumno registrado" || data === "Empleado registrado") {
+                        alert("Registro exitoso");
+                    } else {
+                        alert(data.Mensaje || data);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        }
+
+        function mostrarCamposLogin() {
+            const tipo = document.getElementById("TipoLogin").value;
+            document.getElementById("CamposCorreo").style.display = tipo === "alumno" ? "none" : (tipo ? "block" : "none");
+            document.getElementById("CamposMatriculaLogin").style.display = tipo === "alumno" ? "block" : "none";
+            document.getElementById("CamposNumEmpleadoLogin").style.display = tipo === "empleado" ? "block" : "none";
+            document.getElementById("CamposPassword").style.display = tipo ? "block" : "none";
         }
 
     </script>
@@ -109,16 +206,30 @@
                             <div class="col-md-4 d-flex justify-content-center">
                                 <div class="row">
                                     <div class="col-md-12">
-                                        <span>Usuario</span>
+                                        <span>¿Accederás como?</span>
                                     </div>
                                     <div class="col-md-12">
+                                        <select id="TipoLogin" onchange="mostrarCamposLogin()">
+                                            <option value="">Selecciona...</option>
+                                            <option value="alumno">Alumno</option>
+                                            <option value="empleado">Profesor</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-12" id="CamposCorreo" style="display: none;">
+                                        <span>Correo</span>
                                         <input type="text" id="correo" />
                                     </div>
-                                    <div class="col-md-12">
-                                        <span>Contraseña</span>
+                                    <div class="col-md-12" id="CamposMatriculaLogin" style="display: none;">
+                                        <span>Matrícula</span>
+                                        <input type="text" id="matriculaLogin" />
                                     </div>
-                                    <div class="col-md-12">
-                                        <input type="text" id="password" />
+                                    <div class="col-md-12" id="CamposNumEmpleadoLogin" style="display: none;">
+                                        <span>Número de empleado</span>
+                                        <input type="text" id="numEmpleadoLogin" />
+                                    </div>
+                                    <div class="col-md-12" id="CamposPassword" style="display: none;">
+                                        <span>Contraseña</span>
+                                        <input type="password" id="password" />
                                     </div>
                                     <div class="col-md-12">
                                         <button type="button" class="btn btn-primary" onclick="login()">Login</button>
@@ -127,41 +238,55 @@
                             </div>
                         </div>
                     </div>
+
                     <div class="tab-pane fade" id="pills-registrar" role="tabpanel" aria-labelledby="pills-registrar-tab">
                         <div class="row d-flex justify-content-center">
                             <div class="col-md-4 d-flex justify-content-center">
                                 <div class="row">
                                     <div class="col-md-12">
-                                        <span>Usuario</span>
+                                        <span>Tipo de usuario</span>
                                     </div>
                                     <div class="col-md-12">
+                                        <select id="TipoUsuario" onchange="mostrarCampos()">
+                                            <option value="">Selecciona...</option>
+                                            <option value="alumno">Alumno</option>
+                                            <option value="empleado">Empleado</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-12" id="CamposNombre" style="display: none;">
+                                        <span>Nombre</span>
                                         <input type="text" id="NombreMandar" />
                                     </div>
-                                    <div class="col-md-12">
-                                        <span>Correo</span>
+                                    <div class="col-md-12" id="CamposMatricula" style="display: none;">
+                                        <span>Matrícula</span>
+                                        <input type="text" id="MatriculaMandar" />
+                                    </div>
+                                    <div class="col-md-12" id="CamposEmpleado" style="display: none;">
+                                        <span>Número de empleado</span>
+                                        <input type="text" id="NumEmpleadoMandar" />
+                                        <span>Tipo de empleado</span>
+                                        <input type="text" id="TipoEmpleadoMandar" />
+                                    </div>
+                                    <div class="col-md-12" id="CamposFoto" style="display: none;">
+                                        <span>Foto</span>
+                                        <input type="file" id="FotoMandar" accept="image/*" />
+                                    </div>
+                                    <div class="col-md-12" id="CamposPasswordRegistro" style="display: none;">
+                                        <span>Contraseña</span>
+                                        <input type="password" id="PasswordRegistro" maxlength="50" />
+                                    </div>
+                                    <div class="col-md-12" id="CamposConfirmarPassword" style="display: none;">
+                                        <span>Confirmar contraseña</span>
+                                        <input type="password" id="ConfirmarPasswordRegistro" maxlength="50" />
                                     </div>
                                     <div class="col-md-12">
-                                        <input type="text" id="CorreoMandar" />
-                                    </div>
-                                    <div class="col-md-12">
-                                        <span>Contrasena</span>
-                                    </div>
-                                    <div class="col-md-12">
-                                        <input type="text" id="ContrasenaMandar" />
-                                    </div>
-                                    <div class="col-md-12">
-                                        <span>Moneda</span>
-                                    </div>
-                                    <div class="col-md-12">
-                                        <input type="text" id="MonedaMandar" />
-                                    </div>
-                                    <div class="col-md-12">
-                                        <button type="button" class="btn btn-success" onclick="registrar()">Registrar</button>
+                                        <button type="button" class="btn btn-success" onclick="registrarPersona()">Registrar</button>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+
                 </div>
             </div>
         </div>

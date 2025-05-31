@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MySql.Data.MySqlClient;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
@@ -20,9 +21,9 @@ public class DataBaseHelper
         var dt = new DataTable();
         try
         {
-            using (var con = new SqlConnection(connectionString))
-            using (var cmd = new SqlCommand(query, con))
-            using (var da = new SqlDataAdapter(cmd))
+            using (var con = new MySqlConnection(connectionString))
+            using (var cmd = new MySqlCommand(query, con))
+            using (var da = new MySqlDataAdapter(cmd))
             {
                 da.Fill(dt);
             }
@@ -33,23 +34,23 @@ public class DataBaseHelper
         }
         return dt;
     }
+
     public bool Exists(string query)
     {
         var dt = new DataTable();
         bool existe = false;
         try
         {
-            using (var con = new SqlConnection(connectionString))
-            using (var cmd = new SqlCommand(query, con))
-            using (var da = new SqlDataAdapter(cmd))
+            using (var con = new MySqlConnection(connectionString))
+            using (var cmd = new MySqlCommand(query, con))
+            using (var da = new MySqlDataAdapter(cmd))
             {
                 da.Fill(dt);
             }
-            if(dt.Rows.Count>0)
-                {
+            if (dt.Rows.Count > 0)
+            {
                 existe = true;
             }
-
         }
         catch (Exception ex)
         {
@@ -61,29 +62,40 @@ public class DataBaseHelper
     // ➕ Insertar fila usando diccionario
     public bool InsertRow(string tableName, Dictionary<string, object> data)
     {
-        var columns = string.Join(",", data.Keys);
+        if (string.IsNullOrWhiteSpace(tableName) || data == null || data.Count == 0)
+            return false;
+
+        var columns = string.Join(",", data.Keys.Select(k => $"`{k}`"));
         var parameters = string.Join(",", data.Keys.Select(k => "@" + k));
-        var query = $"INSERT INTO {tableName} ({columns}) VALUES ({parameters})";
+        var query = $"INSERT INTO `{tableName}` ({columns}) VALUES ({parameters})";
 
-        using (var con = new SqlConnection(connectionString))
-        using (var cmd = new SqlCommand(query, con))
+        try
         {
-            foreach (var item in data)
-                cmd.Parameters.AddWithValue("@" + item.Key, item.Value ?? DBNull.Value);
+            using (var con = new MySqlConnection(connectionString))
+            using (var cmd = new MySqlCommand(query, con))
+            {
+                foreach (var item in data)
+                    cmd.Parameters.AddWithValue("@" + item.Key, item.Value ?? DBNull.Value);
 
-            con.Open();
-            return cmd.ExecuteNonQuery() > 0;
+                con.Open();
+                return cmd.ExecuteNonQuery() > 0;
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("❌ Error en InsertRow: " + ex.Message);
+            return false;
         }
     }
 
     // ✏️ Actualizar fila usando diccionario
     public bool UpdateRow(string tableName, Dictionary<string, object> data, string whereClause)
     {
-        var setClause = string.Join(", ", data.Keys.Select(k => $"{k} = @{k}"));
-        var query = $"UPDATE {tableName} SET {setClause} WHERE {whereClause}";
+        var setClause = string.Join(", ", data.Keys.Select(k => $"`{k}` = @{k}"));
+        var query = $"UPDATE `{tableName}` SET {setClause} WHERE {whereClause}";
 
-        using (var con = new SqlConnection(connectionString))
-        using (var cmd = new SqlCommand(query, con))
+        using (var con = new MySqlConnection(connectionString))
+        using (var cmd = new MySqlCommand(query, con))
         {
             foreach (var item in data)
                 cmd.Parameters.AddWithValue("@" + item.Key, item.Value ?? DBNull.Value);
@@ -96,10 +108,10 @@ public class DataBaseHelper
     // ❌ Eliminar fila
     public bool DeleteRow(string tableName, string whereClause)
     {
-        var query = $"DELETE FROM {tableName} WHERE {whereClause}";
+        var query = $"DELETE FROM `{tableName}` WHERE {whereClause}";
 
-        using (var con = new SqlConnection(connectionString))
-        using (var cmd = new SqlCommand(query, con))
+        using (var con = new MySqlConnection(connectionString))
+        using (var cmd = new MySqlCommand(query, con))
         {
             con.Open();
             return cmd.ExecuteNonQuery() > 0;
