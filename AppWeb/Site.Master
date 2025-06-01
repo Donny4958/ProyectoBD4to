@@ -14,9 +14,11 @@
     <script>
         function logout() {
             sessionStorage.removeItem("logueado");
+            sessionStorage.removeItem("nombre");
+            sessionStorage.removeItem("tipo");
+            sessionStorage.removeItem("ID");
             window.location.href = "Default.aspx";
         }
-        const Nombre = sessionStorage.setItem("nombre");
         window.onload = function () {
             var nombre = sessionStorage.getItem("nombre");
             if (nombre) {

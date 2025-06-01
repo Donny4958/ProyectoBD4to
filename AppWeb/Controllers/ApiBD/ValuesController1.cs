@@ -22,7 +22,7 @@ namespace AppWeb.Controllers.ApiBD
         public HttpResponseMessage ObtenerTalleres()
         {
             var db = new DataBaseHelper();
-            DataTable json = db.SelectTable("select * from empleado");
+            DataTable json = db.SelectTable("select * from Negros");
             return Request.CreateResponse(HttpStatusCode.OK, json);
         }
         public bool VerificarRegex(string palabra,int Tipo)
@@ -70,79 +70,38 @@ namespace AppWeb.Controllers.ApiBD
         {
             try
             {
-                string tipo = datos.tipo;
-                string password = datos.password;
+                string Correo = datos.Correo;
+                string password = datos.Password;
 
-                if (string.IsNullOrEmpty(tipo) || string.IsNullOrEmpty(password))
+                if (string.IsNullOrEmpty(Correo) || string.IsNullOrEmpty(password))
                     return Request.CreateResponse(HttpStatusCode.BadRequest, "Datos incompletos");
 
                 var db = new DataBaseHelper();
-
-                if (tipo == "alumno")
+                var dt = db.SelectTable($"SELECT * FROM Login left join Usuarios on IDUsuario=ID WHERE Correo='{Correo}'");
+                var Confirmar = Hash(password);
+                if (dt.Rows.Count == 1)
                 {
-                    string matricula = datos.matricula;
-                    if (string.IsNullOrEmpty(matricula))
-                        return Request.CreateResponse(HttpStatusCode.BadRequest, "Matrícula requerida");
-
-                    var dt = db.SelectTable($"SELECT * FROM Alumno WHERE matricula='{matricula}'");
-                    if (dt.Rows.Count == 1)
+                    string hash = dt.Rows[0]["Password"].ToString();
+                    if (VerifyHashedPassword(hash, password))
                     {
-                        string hash = dt.Rows[0]["Pass"].ToString();
-                        if (VerifyHashedPassword(hash, password))
+                        // Devuelve datos para sessionStorage
+                        var result = new
                         {
-                            // Devuelve datos para sessionStorage
-                            var result = new
-                            {
-                                logueado = true,
-                                tipo = "alumno",
-                                nombre = dt.Rows[0]["nombre"].ToString()
-                            };
-                            return Request.CreateResponse(HttpStatusCode.OK, result);
-                        }
-                        else
-                        {
-                            return Request.CreateResponse(HttpStatusCode.Unauthorized, "Contraseña incorrecta");
-                        }
+                            logueado = true,
+                            ID = dt.Rows[0]["ID"].ToString(),
+                            tipo = dt.Rows[0]["PuedeAutorizar"].ToString() == "1",
+                            nombre = dt.Rows[0]["Nombre"].ToString()
+                        };
+                        return Request.CreateResponse(HttpStatusCode.OK, result);
                     }
                     else
                     {
-                        return Request.CreateResponse(HttpStatusCode.Unauthorized, "Alumno no encontrado");
-                    }
-                }
-                else if (tipo == "empleado")
-                {
-                    string numEmpleado = datos.numEmpleado;
-                    string correo = datos.correo;
-                    if (string.IsNullOrEmpty(numEmpleado) || string.IsNullOrEmpty(correo))
-                        return Request.CreateResponse(HttpStatusCode.BadRequest, "Datos de empleado incompletos");
-
-                    var dt = db.SelectTable($"SELECT * FROM empleado WHERE num_empleado='{numEmpleado}' AND correo='{correo}'");
-                    if (dt.Rows.Count == 1)
-                    {
-                        string hash = dt.Rows[0]["Pass"].ToString();
-                        if (VerifyHashedPassword(hash, password))
-                        {
-                            var result = new
-                            {
-                                logueado = true,
-                                tipo = "empleado",
-                                nombre = dt.Rows[0]["nombre"].ToString()
-                            };
-                            return Request.CreateResponse(HttpStatusCode.OK, result);
-                        }
-                        else
-                        {
-                            return Request.CreateResponse(HttpStatusCode.Unauthorized, "Contraseña incorrecta");
-                        }
-                    }
-                    else
-                    {
-                        return Request.CreateResponse(HttpStatusCode.Unauthorized, "Empleado no encontrado");
+                        return Request.CreateResponse(HttpStatusCode.Unauthorized, "Contraseña incorrecta");
                     }
                 }
                 else
                 {
-                    return Request.CreateResponse(HttpStatusCode.BadRequest, "Tipo de usuario no válido");
+                    return Request.CreateResponse(HttpStatusCode.Unauthorized, "No existe usuario con esos datos");
                 }
             }
             catch (Exception ex)
@@ -154,6 +113,45 @@ namespace AppWeb.Controllers.ApiBD
 
 
 
+        [HttpPost]
+        [Route("ObtenerUsuarioInfo")]
+        public HttpResponseMessage ObtenerUsuarioInfo([FromBody] object var)
+        {
+            // Deserializa el objeto dinámicamente
+            dynamic datos = var;
+            string tipo = datos.tipo;
+            string id = datos.id;
+
+            var db = new DataBaseHelper();
+            if (tipo == "alumno")
+            {
+                var dt = db.SelectTable($"SELECT nombre, matricula, foto FROM Alumno WHERE matricula='{id}'");
+                if (dt.Rows.Count == 1)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new
+                    {
+                        nombre = dt.Rows[0]["nombre"].ToString(),
+                        matricula = dt.Rows[0]["matricula"].ToString(),
+                        foto = dt.Rows[0]["foto"].ToString()
+                    });
+                }
+            }
+            else if (tipo == "empleado")
+            {
+                var dt = db.SelectTable($"SELECT nombre, num_empleado, tipo_empleado, foto FROM empleado WHERE id_empleado='{id}'");
+                if (dt.Rows.Count == 1)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new
+                    {
+                        nombre = dt.Rows[0]["nombre"].ToString(),
+                        num_empleado = dt.Rows[0]["num_empleado"].ToString(),
+                        tipo_empleado = dt.Rows[0]["tipo_empleado"].ToString(),
+                        foto = dt.Rows[0]["foto"].ToString()
+                    });
+                }
+            }
+            return Request.CreateResponse(HttpStatusCode.NotFound, "Usuario no encontrado");
+        }
 
         [HttpPost]
         [Route("RegistrarPersona")]

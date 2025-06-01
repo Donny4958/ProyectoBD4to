@@ -227,6 +227,7 @@
     <Content Include="Default.aspx" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
+    <Content Include="Laboratorio.aspx" />
     <Content Include="Scripts\bootstrap.bundle.js" />
     <Content Include="Scripts\bootstrap.bundle.min.js" />
     <Content Include="Scripts\bootstrap.esm.js" />
@@ -276,7 +277,15 @@
       <DependentUpon>About.aspx</DependentUpon>
     </Compile>
     <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="Controllers\ApiBD\ApiLaboratorioController.cs" />
     <Compile Include="DataBaseHelper.cs" />
+    <Compile Include="Laboratorio.aspx.cs">
+      <DependentUpon>Laboratorio.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Laboratorio.aspx.designer.cs">
+      <DependentUpon>Laboratorio.aspx</DependentUpon>
+    </Compile>
     <Compile Include="WebApiConfig.cs" />
     <Compile Include="Contact.aspx.cs">
       <DependentUpon>Contact.aspx</DependentUpon>
