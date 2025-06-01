@@ -3,24 +3,28 @@
   "WorkspaceRootPath": "C:\\Users\\elgam\\OneDrive\\Documentos\\ProyectoBD\\Proyecto\\ProyectoBD\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{0E34F9D5-D35E-4506-8E68-A31C692A0005}|AppWeb\\AppWeb.csproj|c:\\users\\elgam\\onedrive\\documentos\\proyectobd\\proyecto\\proyectobd\\appweb\\controllers\\apibd\\valuescontroller1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{0E34F9D5-D35E-4506-8E68-A31C692A0005}|AppWeb\\AppWeb.csproj|solutionrelative:appweb\\controllers\\apibd\\valuescontroller1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{0E34F9D5-D35E-4506-8E68-A31C692A0005}|AppWeb\\AppWeb.csproj|C:\\Users\\elgam\\OneDrive\\Documentos\\ProyectoBD\\Proyecto\\ProyectoBD\\appweb\\default.aspx||{57312C73-6202-49E9-B1E1-40EA1A6DC1F6}",
-      "RelativeMoniker": "D:0:0:{0E34F9D5-D35E-4506-8E68-A31C692A0005}|AppWeb\\AppWeb.csproj|solutionrelative:appweb\\default.aspx||{57312C73-6202-49E9-B1E1-40EA1A6DC1F6}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{0E34F9D5-D35E-4506-8E68-A31C692A0005}|AppWeb\\AppWeb.csproj|C:\\Users\\elgam\\OneDrive\\Documentos\\ProyectoBD\\Proyecto\\ProyectoBD\\appweb\\site.master||{B30AFBFF-D992-43B7-B62D-2642580A2883}",
-      "RelativeMoniker": "D:0:0:{0E34F9D5-D35E-4506-8E68-A31C692A0005}|AppWeb\\AppWeb.csproj|solutionrelative:appweb\\site.master||{B30AFBFF-D992-43B7-B62D-2642580A2883}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{0E34F9D5-D35E-4506-8E68-A31C692A0005}|AppWeb\\AppWeb.csproj|C:\\Users\\elgam\\OneDrive\\Documentos\\ProyectoBD\\Proyecto\\ProyectoBD\\appweb\\laboratorio.aspx||{57312C73-6202-49E9-B1E1-40EA1A6DC1F6}",
+      "AbsoluteMoniker": "D:0:0:{0E34F9D5-D35E-4506-8E68-A31C692A0005}|AppWeb\\AppWeb.csproj|c:\\users\\elgam\\onedrive\\documentos\\proyectobd\\proyecto\\proyectobd\\appweb\\laboratorio.aspx||{57312C73-6202-49E9-B1E1-40EA1A6DC1F6}",
       "RelativeMoniker": "D:0:0:{0E34F9D5-D35E-4506-8E68-A31C692A0005}|AppWeb\\AppWeb.csproj|solutionrelative:appweb\\laboratorio.aspx||{57312C73-6202-49E9-B1E1-40EA1A6DC1F6}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{0E34F9D5-D35E-4506-8E68-A31C692A0005}|AppWeb\\AppWeb.csproj|C:\\Users\\elgam\\OneDrive\\Documentos\\ProyectoBD\\Proyecto\\ProyectoBD\\appweb\\web.config||{FA3CD31E-987B-443A-9B81-186104E8DAC1}",
-      "RelativeMoniker": "D:0:0:{0E34F9D5-D35E-4506-8E68-A31C692A0005}|AppWeb\\AppWeb.csproj|solutionrelative:appweb\\web.config||{FA3CD31E-987B-443A-9B81-186104E8DAC1}"
+      "AbsoluteMoniker": "D:0:0:{0E34F9D5-D35E-4506-8E68-A31C692A0005}|AppWeb\\AppWeb.csproj|c:\\users\\elgam\\onedrive\\documentos\\proyectobd\\proyecto\\proyectobd\\appweb\\alertas.aspx||{57312C73-6202-49E9-B1E1-40EA1A6DC1F6}",
+      "RelativeMoniker": "D:0:0:{0E34F9D5-D35E-4506-8E68-A31C692A0005}|AppWeb\\AppWeb.csproj|solutionrelative:appweb\\alertas.aspx||{57312C73-6202-49E9-B1E1-40EA1A6DC1F6}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0E34F9D5-D35E-4506-8E68-A31C692A0005}|AppWeb\\AppWeb.csproj|c:\\users\\elgam\\onedrive\\documentos\\proyectobd\\proyecto\\proyectobd\\appweb\\about.aspx||{57312C73-6202-49E9-B1E1-40EA1A6DC1F6}",
+      "RelativeMoniker": "D:0:0:{0E34F9D5-D35E-4506-8E68-A31C692A0005}|AppWeb\\AppWeb.csproj|solutionrelative:appweb\\about.aspx||{57312C73-6202-49E9-B1E1-40EA1A6DC1F6}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0E34F9D5-D35E-4506-8E68-A31C692A0005}|AppWeb\\AppWeb.csproj|C:\\Users\\elgam\\OneDrive\\Documentos\\ProyectoBD\\Proyecto\\ProyectoBD\\appweb\\controllers\\apibd\\valuescontroller1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0E34F9D5-D35E-4506-8E68-A31C692A0005}|AppWeb\\AppWeb.csproj|solutionrelative:appweb\\controllers\\apibd\\valuescontroller1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0E34F9D5-D35E-4506-8E68-A31C692A0005}|AppWeb\\AppWeb.csproj|c:\\users\\elgam\\onedrive\\documentos\\proyectobd\\proyecto\\proyectobd\\appweb\\contact.aspx||{57312C73-6202-49E9-B1E1-40EA1A6DC1F6}",
+      "RelativeMoniker": "D:0:0:{0E34F9D5-D35E-4506-8E68-A31C692A0005}|AppWeb\\AppWeb.csproj|solutionrelative:appweb\\contact.aspx||{57312C73-6202-49E9-B1E1-40EA1A6DC1F6}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0E34F9D5-D35E-4506-8E68-A31C692A0005}|AppWeb\\AppWeb.csproj|c:\\users\\elgam\\onedrive\\documentos\\proyectobd\\proyecto\\proyectobd\\appweb\\contact.aspx.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0E34F9D5-D35E-4506-8E68-A31C692A0005}|AppWeb\\AppWeb.csproj|solutionrelative:appweb\\contact.aspx.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -29,12 +33,12 @@
       "VerticalTabListWidth": 256,
       "DocumentGroups": [
         {
-          "DockedHeight": 235,
-          "SelectedChildIndex": 1,
+          "DockedHeight": 291,
+          "SelectedChildIndex": 0,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 0,
               "Title": "Laboratorio.aspx",
               "DocumentMoniker": "C:\\Users\\elgam\\OneDrive\\Documentos\\ProyectoBD\\Proyecto\\ProyectoBD\\AppWeb\\Laboratorio.aspx",
               "RelativeDocumentMoniker": "AppWeb\\Laboratorio.aspx",
@@ -42,60 +46,72 @@
               "RelativeToolTip": "AppWeb\\Laboratorio.aspx",
               "LogicalView": "7651a703-06e5-11d1-8ebd-00a0c90f26ea",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000195|",
-              "WhenOpened": "2025-05-31T21:52:33.956Z",
-              "IsPinned": true,
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "ValuesController1.cs",
-              "DocumentMoniker": "C:\\Users\\elgam\\OneDrive\\Documentos\\ProyectoBD\\Proyecto\\ProyectoBD\\AppWeb\\Controllers\\ApiBD\\ValuesController1.cs",
-              "RelativeDocumentMoniker": "AppWeb\\Controllers\\ApiBD\\ValuesController1.cs",
-              "ToolTip": "C:\\Users\\elgam\\OneDrive\\Documentos\\ProyectoBD\\Proyecto\\ProyectoBD\\AppWeb\\Controllers\\ApiBD\\ValuesController1.cs",
-              "RelativeToolTip": "AppWeb\\Controllers\\ApiBD\\ValuesController1.cs",
-              "ViewState": "AgIAAEYAAAAAAAAAAAAiwFEAAAARAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-06-01T02:20:20.603Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "Web.config",
-              "DocumentMoniker": "C:\\Users\\elgam\\OneDrive\\Documentos\\ProyectoBD\\Proyecto\\ProyectoBD\\AppWeb\\Web.config",
-              "RelativeDocumentMoniker": "AppWeb\\Web.config",
-              "ToolTip": "C:\\Users\\elgam\\OneDrive\\Documentos\\ProyectoBD\\Proyecto\\ProyectoBD\\AppWeb\\Web.config",
-              "RelativeToolTip": "AppWeb\\Web.config",
-              "ViewState": "AgIAACQAAAAAAAAAAAAAABAAAAAKAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000601|",
-              "WhenOpened": "2025-06-01T00:05:45.983Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "Site.Master",
-              "DocumentMoniker": "C:\\Users\\elgam\\OneDrive\\Documentos\\ProyectoBD\\Proyecto\\ProyectoBD\\AppWeb\\Site.Master",
-              "RelativeDocumentMoniker": "AppWeb\\Site.Master",
-              "ToolTip": "C:\\Users\\elgam\\OneDrive\\Documentos\\ProyectoBD\\Proyecto\\ProyectoBD\\AppWeb\\Site.Master",
-              "RelativeToolTip": "AppWeb\\Site.Master",
-              "LogicalView": "7651a703-06e5-11d1-8ebd-00a0c90f26ea",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000195|",
-              "WhenOpened": "2025-05-31T21:51:32.394Z",
+              "WhenOpened": "2025-06-01T03:06:30.412Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 1,
-              "Title": "Default.aspx",
-              "DocumentMoniker": "C:\\Users\\elgam\\OneDrive\\Documentos\\ProyectoBD\\Proyecto\\ProyectoBD\\AppWeb\\Default.aspx",
-              "RelativeDocumentMoniker": "AppWeb\\Default.aspx",
-              "ToolTip": "C:\\Users\\elgam\\OneDrive\\Documentos\\ProyectoBD\\Proyecto\\ProyectoBD\\AppWeb\\Default.aspx",
-              "RelativeToolTip": "AppWeb\\Default.aspx",
+              "Title": "Alertas.aspx",
+              "DocumentMoniker": "C:\\Users\\elgam\\OneDrive\\Documentos\\ProyectoBD\\Proyecto\\ProyectoBD\\AppWeb\\Alertas.aspx",
+              "RelativeDocumentMoniker": "AppWeb\\Alertas.aspx",
+              "ToolTip": "C:\\Users\\elgam\\OneDrive\\Documentos\\ProyectoBD\\Proyecto\\ProyectoBD\\AppWeb\\Alertas.aspx",
+              "RelativeToolTip": "AppWeb\\Alertas.aspx",
               "LogicalView": "7651a703-06e5-11d1-8ebd-00a0c90f26ea",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000195|",
-              "WhenOpened": "2025-04-27T04:27:37.234Z",
+              "WhenOpened": "2025-06-01T03:03:28.829Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "About.aspx",
+              "DocumentMoniker": "C:\\Users\\elgam\\OneDrive\\Documentos\\ProyectoBD\\Proyecto\\ProyectoBD\\AppWeb\\About.aspx",
+              "RelativeDocumentMoniker": "AppWeb\\About.aspx",
+              "ToolTip": "C:\\Users\\elgam\\OneDrive\\Documentos\\ProyectoBD\\Proyecto\\ProyectoBD\\AppWeb\\About.aspx",
+              "RelativeToolTip": "AppWeb\\About.aspx",
+              "LogicalView": "7651a703-06e5-11d1-8ebd-00a0c90f26ea",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000195|",
+              "WhenOpened": "2025-06-01T03:02:21.996Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "Contact.aspx.cs",
+              "DocumentMoniker": "C:\\Users\\elgam\\OneDrive\\Documentos\\ProyectoBD\\Proyecto\\ProyectoBD\\AppWeb\\Contact.aspx.cs",
+              "RelativeDocumentMoniker": "AppWeb\\Contact.aspx.cs",
+              "ToolTip": "C:\\Users\\elgam\\OneDrive\\Documentos\\ProyectoBD\\Proyecto\\ProyectoBD\\AppWeb\\Contact.aspx.cs",
+              "RelativeToolTip": "AppWeb\\Contact.aspx.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-01T02:52:04.462Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "Contact.aspx",
+              "DocumentMoniker": "C:\\Users\\elgam\\OneDrive\\Documentos\\ProyectoBD\\Proyecto\\ProyectoBD\\AppWeb\\Contact.aspx",
+              "RelativeDocumentMoniker": "AppWeb\\Contact.aspx",
+              "ToolTip": "C:\\Users\\elgam\\OneDrive\\Documentos\\ProyectoBD\\Proyecto\\ProyectoBD\\AppWeb\\Contact.aspx",
+              "RelativeToolTip": "AppWeb\\Contact.aspx",
+              "LogicalView": "7651a703-06e5-11d1-8ebd-00a0c90f26ea",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000195|",
+              "WhenOpened": "2025-06-01T02:51:31.448Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "ValuesController1.cs",
+              "DocumentMoniker": "C:\\Users\\elgam\\OneDrive\\Documentos\\ProyectoBD\\Proyecto\\ProyectoBD\\AppWeb\\Controllers\\ApiBD\\ValuesController1.cs",
+              "RelativeDocumentMoniker": "AppWeb\\Controllers\\ApiBD\\ValuesController1.cs",
+              "ToolTip": "C:\\Users\\elgam\\OneDrive\\Documentos\\ProyectoBD\\Proyecto\\ProyectoBD\\AppWeb\\Controllers\\ApiBD\\ValuesController1.cs",
+              "RelativeToolTip": "AppWeb\\Controllers\\ApiBD\\ValuesController1.cs",
+              "ViewState": "AgIAAHEAAAAAAAAAAAAowHUAAAA1AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-01T02:20:20.603Z",
               "EditorCaption": ""
             }
           ]

@@ -13,6 +13,8 @@
     </asp:PlaceHolder>
     <script>
         function logout() {
+            console.log('bbb')
+            document.getElementById('TabPrincipal').style.display = "none";
             sessionStorage.removeItem("logueado");
             sessionStorage.removeItem("nombre");
             sessionStorage.removeItem("tipo");
@@ -21,8 +23,16 @@
         }
         window.onload = function () {
             var nombre = sessionStorage.getItem("nombre");
+            var log = sessionStorage.getItem("logueado");
+            console.log(log)
             if (nombre) {
+                console.log('aaa')
+                document.getElementById('TabPrincipal').style.display = "";
                 document.getElementById("nombreUsuario").textContent = nombre;
+            } else {
+                console.log('bbb')
+                document.getElementById('TabPrincipal').style.display = "none";
+
             }
         };
 
@@ -51,18 +61,23 @@
             </Scripts>
         </asp:ScriptManager>
 
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-dark">
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-dark" id="TabPrincipal">
             <div class="container">
                 <a class="navbar-brand" runat="server" href="~/">Administrador</a>
                 <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" title="Alternar navegación" aria-controls="navbarSupportedContent"
                     aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="collapse navbar-collapse d-sm-inline-flex justify-content-between">
+                <div class="collapse navbar-collapse d-sm-inline-flex justify-content-between" >
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item"><a class="nav-link" runat="server" href="~/">Inicio</a></li>
-                        <li class="nav-item"><a class="nav-link" runat="server" href="~/About">Acerca de</a></li>
-                        <li class="nav-item"><a class="nav-link" runat="server" href="~/Contact">Contacto</a></li>
+                        <li class="nav-item"><a class="nav-link" runat="server" href="~/Alertas">Alertas</a></li>
+                        <li class="nav-item"><a class="nav-link" runat="server" href="~/Componentes">Componentes</a></li>
+                        <li class="nav-item"><a class="nav-link" runat="server" href="~/Equipo">Equipo</a></li>
+                        <li class="nav-item"><a class="nav-link" runat="server" href="~/Laboratorio">Laboratorio</a></li>
+                        <li class="nav-item"><a class="nav-link" runat="server" href="~/Prestamos">Prestamos</a></li>
+                        <li class="nav-item"><a class="nav-link" runat="server" href="~/Proyectos">Proyectos</a></li>
+                        <li class="nav-item"><a class="nav-link" runat="server" href="~/Usuario">Usuarios</a></li>
                         <li class="nav-item"><span id="nombreUsuario" class="nav-link" style="font-weight:bold;"></span></li>
                         <li class="nav-item"><a class="nav-link" runat="server" onclick="logout()">Salir</a></li>
                     </ul>
