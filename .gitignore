@@ -3,4 +3,12 @@ AppWeb/Web.Config
 AppWeb/.vs
 AppWeb/obj/Debug
 AppWeb/bin
-AppWeb\bin
+AppWeb/bin
+.vs/Cuentas/v17/.suo
+.vs/Cuentas/v17/DocumentLayout.backup.json
+.vs/Cuentas/v17/DocumentLayout.json
+AppWeb/bin/AppWeb.dll
+AppWeb/bin/AppWeb.pdb
+AppWeb/obj/Debug/AppWeb.dll
+AppWeb/obj/Debug/AppWeb.pdb
+AppWeb/obj/Debug/DesignTimeResolveAssemblyReferencesInput.cache

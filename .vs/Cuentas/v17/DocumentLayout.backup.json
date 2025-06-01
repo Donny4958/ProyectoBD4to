@@ -3,7 +3,7 @@
   "WorkspaceRootPath": "C:\\Users\\elgam\\OneDrive\\Documentos\\ProyectoBD\\Proyecto\\ProyectoBD\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{0E34F9D5-D35E-4506-8E68-A31C692A0005}|AppWeb\\AppWeb.csproj|c:\\users\\elgam\\onedrive\\documentos\\proyectobd\\proyecto\\proyectobd\\appweb\\laboratorio.aspx||{57312C73-6202-49E9-B1E1-40EA1A6DC1F6}",
+      "AbsoluteMoniker": "D:0:0:{0E34F9D5-D35E-4506-8E68-A31C692A0005}|AppWeb\\AppWeb.csproj|C:\\Users\\elgam\\OneDrive\\Documentos\\ProyectoBD\\Proyecto\\ProyectoBD\\appweb\\laboratorio.aspx||{57312C73-6202-49E9-B1E1-40EA1A6DC1F6}",
       "RelativeMoniker": "D:0:0:{0E34F9D5-D35E-4506-8E68-A31C692A0005}|AppWeb\\AppWeb.csproj|solutionrelative:appweb\\laboratorio.aspx||{57312C73-6202-49E9-B1E1-40EA1A6DC1F6}"
     },
     {
@@ -11,16 +11,16 @@
       "RelativeMoniker": "D:0:0:{0E34F9D5-D35E-4506-8E68-A31C692A0005}|AppWeb\\AppWeb.csproj|solutionrelative:appweb\\controllers\\apibd\\apilaboratoriocontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{0E34F9D5-D35E-4506-8E68-A31C692A0005}|AppWeb\\AppWeb.csproj|c:\\users\\elgam\\onedrive\\documentos\\proyectobd\\proyecto\\proyectobd\\appweb\\databasehelper.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{0E34F9D5-D35E-4506-8E68-A31C692A0005}|AppWeb\\AppWeb.csproj|C:\\Users\\elgam\\OneDrive\\Documentos\\ProyectoBD\\Proyecto\\ProyectoBD\\appweb\\contact.aspx||{57312C73-6202-49E9-B1E1-40EA1A6DC1F6}",
+      "RelativeMoniker": "D:0:0:{0E34F9D5-D35E-4506-8E68-A31C692A0005}|AppWeb\\AppWeb.csproj|solutionrelative:appweb\\contact.aspx||{57312C73-6202-49E9-B1E1-40EA1A6DC1F6}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0E34F9D5-D35E-4506-8E68-A31C692A0005}|AppWeb\\AppWeb.csproj|C:\\Users\\elgam\\OneDrive\\Documentos\\ProyectoBD\\Proyecto\\ProyectoBD\\appweb\\databasehelper.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{0E34F9D5-D35E-4506-8E68-A31C692A0005}|AppWeb\\AppWeb.csproj|solutionrelative:appweb\\databasehelper.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{0E34F9D5-D35E-4506-8E68-A31C692A0005}|AppWeb\\AppWeb.csproj|c:\\users\\elgam\\onedrive\\documentos\\proyectobd\\proyecto\\proyectobd\\appweb\\controllers\\apibd\\valuescontroller1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{0E34F9D5-D35E-4506-8E68-A31C692A0005}|AppWeb\\AppWeb.csproj|C:\\Users\\elgam\\OneDrive\\Documentos\\ProyectoBD\\Proyecto\\ProyectoBD\\appweb\\controllers\\apibd\\valuescontroller1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{0E34F9D5-D35E-4506-8E68-A31C692A0005}|AppWeb\\AppWeb.csproj|solutionrelative:appweb\\controllers\\apibd\\valuescontroller1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{0E34F9D5-D35E-4506-8E68-A31C692A0005}|AppWeb\\AppWeb.csproj|c:\\users\\elgam\\onedrive\\documentos\\proyectobd\\proyecto\\proyectobd\\appweb\\contact.aspx||{57312C73-6202-49E9-B1E1-40EA1A6DC1F6}",
-      "RelativeMoniker": "D:0:0:{0E34F9D5-D35E-4506-8E68-A31C692A0005}|AppWeb\\AppWeb.csproj|solutionrelative:appweb\\contact.aspx||{57312C73-6202-49E9-B1E1-40EA1A6DC1F6}"
     }
   ],
   "DocumentGroupContainers": [
@@ -34,7 +34,7 @@
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 4,
               "Title": "ValuesController1.cs",
               "DocumentMoniker": "C:\\Users\\elgam\\OneDrive\\Documentos\\ProyectoBD\\Proyecto\\ProyectoBD\\AppWeb\\Controllers\\ApiBD\\ValuesController1.cs",
               "RelativeDocumentMoniker": "AppWeb\\Controllers\\ApiBD\\ValuesController1.cs",
@@ -42,12 +42,11 @@
               "RelativeToolTip": "AppWeb\\Controllers\\ApiBD\\ValuesController1.cs",
               "ViewState": "AgIAAEUAAAAAAAAAAAAowFAAAAAQAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-06-01T03:25:30.56Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-06-01T03:25:30.56Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 3,
               "Title": "DataBaseHelper.cs",
               "DocumentMoniker": "C:\\Users\\elgam\\OneDrive\\Documentos\\ProyectoBD\\Proyecto\\ProyectoBD\\AppWeb\\DataBaseHelper.cs",
               "RelativeDocumentMoniker": "AppWeb\\DataBaseHelper.cs",
@@ -55,8 +54,7 @@
               "RelativeToolTip": "AppWeb\\DataBaseHelper.cs",
               "ViewState": "AgIAABgAAAAAAAAAAAAYwCUAAAAkAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-06-01T03:16:45.538Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-06-01T03:16:45.538Z"
             },
             {
               "$type": "Document",
@@ -66,7 +64,7 @@
               "RelativeDocumentMoniker": "AppWeb\\Controllers\\ApiBD\\ApiLaboratorioController.cs",
               "ToolTip": "C:\\Users\\elgam\\OneDrive\\Documentos\\ProyectoBD\\Proyecto\\ProyectoBD\\AppWeb\\Controllers\\ApiBD\\ApiLaboratorioController.cs",
               "RelativeToolTip": "AppWeb\\Controllers\\ApiBD\\ApiLaboratorioController.cs",
-              "ViewState": "AgIAAGkAAAAAAAAAAAAiwGoAAAArAAAAAAAAAA==",
+              "ViewState": "AgIAAIkAAAAAAAAAAAAQwJIAAAAYAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-06-01T03:14:59.826Z",
               "EditorCaption": ""
@@ -86,7 +84,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 2,
               "Title": "Contact.aspx",
               "DocumentMoniker": "C:\\Users\\elgam\\OneDrive\\Documentos\\ProyectoBD\\Proyecto\\ProyectoBD\\AppWeb\\Contact.aspx",
               "RelativeDocumentMoniker": "AppWeb\\Contact.aspx",
@@ -94,8 +92,7 @@
               "RelativeToolTip": "AppWeb\\Contact.aspx",
               "LogicalView": "7651a703-06e5-11d1-8ebd-00a0c90f26ea",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000195|",
-              "WhenOpened": "2025-06-01T02:51:31.448Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-06-01T02:51:31.448Z"
             }
           ]
         }

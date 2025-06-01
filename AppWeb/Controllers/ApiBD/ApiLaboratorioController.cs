@@ -22,7 +22,7 @@ namespace AppWeb.Controllers.ApiBD
         public HttpResponseMessage ObtenerLaboratorios()
         {
             var db = new DataBaseHelper();
-            var dt = db.SelectTable("SELECT Laboratorios.*,Nombre Res FROM Laboratorios left join Login on IDUsuario=ResponsableID;");
+            var dt = db.SelectTable("SELECT Laboratorios.ID,Laboratorios.Nombre,Laboratorios.Descripcion, Usuarios.Nombre Res FROM Laboratorios INNER JOIN Usuarios ON Laboratorios.ResponsableID = Usuarios.ID;");
             var lista = new List<object>();
             foreach (DataRow row in dt.Rows)
             {
@@ -74,7 +74,7 @@ namespace AppWeb.Controllers.ApiBD
         {
             { "Nombre", nombre },
             { "Descripcion", descripcion },
-            { "responsable", responsable }
+            { "ResponsableID", responsable }
         };
                 bool insertado = db.InsertRow("Laboratorios", data);
                 if (insertado)
@@ -130,9 +130,34 @@ namespace AppWeb.Controllers.ApiBD
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, ex.Message);
             }
         }
+        [HttpGet]
+        [Route("ObtenerPorLaboratorio")]
+        public HttpResponseMessage ObtenerPorLaboratorio(int idLaboratorio)
+        {
+            try
+            {
+                var db = new DataBaseHelper();
+                // Ajusta los nombres de tabla y campos según tu modelo
+                var dt = db.SelectTable($"select * from Proyectos where Laboratorio= {idLaboratorio}");
+                var lista = new List<object>();
+                foreach (DataRow row in dt.Rows)
+                {
+                    lista.Add(new
+                    {
+                        Nombre = row["Nombre"].ToString(),
+                        Descripcion = row["Descripcion"].ToString(),
+                        Responsable = row["Responsable"].ToString(),
+                    });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, lista);
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, ex.Message);
+            }
+        }
 
-
-        [HttpPut]
+            [HttpPut]
         [Route("ModificarLaboratorio")]
         public HttpResponseMessage ModificarLaboratorio([FromBody] dynamic datos)
         {
@@ -143,15 +168,15 @@ namespace AppWeb.Controllers.ApiBD
                 string descripcion = datos.descripcion;
                 string responsable = datos.responsable;
 
-                if (id <= 0 || string.IsNullOrEmpty(nombre) || string.IsNullOrEmpty(descripcion)|| string.IsNullOrEmpty(responsable))
+                if (id < 0 || string.IsNullOrEmpty(nombre) || string.IsNullOrEmpty(descripcion)|| string.IsNullOrEmpty(responsable))
                     return Request.CreateResponse(HttpStatusCode.BadRequest, "Datos incompletos");
 
                 var db = new DataBaseHelper();
                 var data = new Dictionary<string, object>
         {
-            { "nombre", nombre },
-            { "descripcion", descripcion },
-            { "responsable", responsable }
+            { "Nombre", nombre },
+            { "Descripcion", descripcion },
+            { "ResponsableID", responsable }
         };
                 bool actualizado = db.UpdateRow("Laboratorios", data, $"ID={id}");
                 if (actualizado)

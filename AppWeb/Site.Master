@@ -30,9 +30,12 @@
                 document.getElementById('TabPrincipal').style.display = "";
                 document.getElementById("nombreUsuario").textContent = nombre;
             } else {
-                console.log('bbb')
+                const url = `${window.location.protocol}//${window.location.hostname}:${window.location.port}/`;
                 document.getElementById('TabPrincipal').style.display = "none";
-
+                if (window.location.href != url+"Default") {
+                    logout()
+                }
+               
             }
         };
 
