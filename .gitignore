@@ -1,3 +1,6 @@
 AppWeb/Web.Config
 .vs
 AppWeb/.vs
+AppWeb/obj/Debug
+AppWeb/bin
+AppWeb\bin

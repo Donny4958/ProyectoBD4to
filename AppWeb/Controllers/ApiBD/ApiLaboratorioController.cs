@@ -22,15 +22,16 @@ namespace AppWeb.Controllers.ApiBD
         public HttpResponseMessage ObtenerLaboratorios()
         {
             var db = new DataBaseHelper();
-            var dt = db.SelectTable("SELECT id_laboratorio, nombre, descripcion FROM Laboratorio");
+            var dt = db.SelectTable("SELECT Laboratorios.*,Nombre Res FROM Laboratorios left join Login on IDUsuario=ResponsableID;");
             var lista = new List<object>();
             foreach (DataRow row in dt.Rows)
             {
                 lista.Add(new
                 {
-                    id_laboratorio = row["id_laboratorio"].ToString(),
-                    nombre = row["nombre"].ToString(),
-                    descripcion = row["descripcion"].ToString()
+                    Id = row["ID"].ToString(),
+                    nombre = row["Nombre"].ToString(),
+                    descripcion = row["Descripcion"].ToString(),
+                    Responsable = row["Res"].ToString()
                 });
             }
             return Request.CreateResponse(HttpStatusCode.OK, lista);
@@ -63,17 +64,19 @@ namespace AppWeb.Controllers.ApiBD
             {
                 string nombre = datos.nombre;
                 string descripcion = datos.descripcion;
+                string responsable = datos.responsable;
 
-                if (string.IsNullOrEmpty(nombre) || string.IsNullOrEmpty(descripcion))
+                if (string.IsNullOrEmpty(nombre) || string.IsNullOrEmpty(descripcion)|| string.IsNullOrEmpty(responsable))
                     return Request.CreateResponse(HttpStatusCode.BadRequest, "Datos incompletos");
 
                 var db = new DataBaseHelper();
                 var data = new Dictionary<string, object>
         {
-            { "nombre", nombre },
-            { "descripcion", descripcion }
+            { "Nombre", nombre },
+            { "Descripcion", descripcion },
+            { "responsable", responsable }
         };
-                bool insertado = db.InsertRow("Laboratorio", data);
+                bool insertado = db.InsertRow("Laboratorios", data);
                 if (insertado)
                     return Request.CreateResponse(HttpStatusCode.OK, "Laboratorio creado correctamente");
                 else
@@ -102,6 +105,31 @@ namespace AppWeb.Controllers.ApiBD
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, ex.Message);
             }
         }
+        [HttpGet]
+        [Route("ObtenerProfesoresOEmpleados")]
+        public HttpResponseMessage ObtenerProfesoresOEmpleados()
+        {
+            try
+            {
+                var db = new DataBaseHelper();
+                var dt = db.SelectTable("SELECT ID,Nombre,rol FROM Usuarios WHERE rol IN ('profesor', 'empleado');");
+                var lista = new List<object>();
+                foreach (DataRow row in dt.Rows)
+                {
+                    lista.Add(new
+                    {
+                        ID = row["ID"].ToString(),
+                        Rol = row["rol"].ToString(),
+                        Nombre= row["Nombre"].ToString(),
+                    });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, lista);
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, ex.Message);
+            }
+        }
 
 
         [HttpPut]
@@ -113,17 +141,19 @@ namespace AppWeb.Controllers.ApiBD
                 int id = datos.id_laboratorio;
                 string nombre = datos.nombre;
                 string descripcion = datos.descripcion;
+                string responsable = datos.responsable;
 
-                if (id <= 0 || string.IsNullOrEmpty(nombre) || string.IsNullOrEmpty(descripcion))
+                if (id <= 0 || string.IsNullOrEmpty(nombre) || string.IsNullOrEmpty(descripcion)|| string.IsNullOrEmpty(responsable))
                     return Request.CreateResponse(HttpStatusCode.BadRequest, "Datos incompletos");
 
                 var db = new DataBaseHelper();
                 var data = new Dictionary<string, object>
         {
             { "nombre", nombre },
-            { "descripcion", descripcion }
+            { "descripcion", descripcion },
+            { "responsable", responsable }
         };
-                bool actualizado = db.UpdateRow("Laboratorio", data, $"id_laboratorio={id}");
+                bool actualizado = db.UpdateRow("Laboratorios", data, $"ID={id}");
                 if (actualizado)
                     return Request.CreateResponse(HttpStatusCode.OK, "Laboratorio modificado correctamente");
                 else
