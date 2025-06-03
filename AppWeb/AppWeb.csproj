@@ -229,6 +229,7 @@
     <Content Include="Equipo.aspx" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
+    <Content Include="Images\CEID.jpg" />
     <Content Include="Laboratorio.aspx" />
     <Content Include="Prestamos.aspx" />
     <Content Include="Scripts\bootstrap.bundle.js" />
