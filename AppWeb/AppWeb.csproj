@@ -226,7 +226,6 @@
     <Content Include="Content\bootstrap.rtl.min.css" />
     <Content Include="Content\Site.css" />
     <Content Include="Default.aspx" />
-    <Content Include="Equipo.aspx" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Laboratorio.aspx" />
@@ -289,17 +288,9 @@
     </Compile>
     <Compile Include="App_Start\RouteConfig.cs" />
     <Content Include="Componentes.aspx" />
-    <Compile Include="Controllers\ApiBD\ApiEquiposController.cs" />
     <Compile Include="Controllers\ApiBD\ApiProyectosController.cs" />
     <Compile Include="Controllers\ApiBD\ApiLaboratorioController.cs" />
     <Compile Include="DataBaseHelper.cs" />
-    <Compile Include="Equipo.aspx.cs">
-      <DependentUpon>Equipo.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Equipo.aspx.designer.cs">
-      <DependentUpon>Equipo.aspx</DependentUpon>
-    </Compile>
     <Compile Include="Laboratorio.aspx.cs">
       <DependentUpon>Laboratorio.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>

@@ -17,28 +17,24 @@ namespace AppWeb.Controllers.ApiBD
             var db = new DataBaseHelper();
             var dt = db.SelectTable(@"
                 SELECT 
-                    P.ID, 
-                    P.Nombre, 
-                    P.Descripcion, 
-                    L.Nombre AS NombreLaboratorio, 
-                    U.Nombre AS NombreResponsable,
-                    E.Nombre AS NombreEquipo
-                FROM Proyectos P
-                LEFT JOIN Laboratorios L ON P.Laboratorio = L.ID
-                LEFT JOIN Usuarios U ON P.Responsable = U.ID
-                LEFT JOIN Equipos E ON P.Equipo = E.ID
+                    P.id_proyecto, 
+                    P.nombrep, 
+                    P.descripcion, 
+                    P.id_responsable,
+                    U.Nombre AS nombre_responsable
+                FROM PROYECTOS P
+                LEFT JOIN USUARIOS U ON P.id_responsable = U.id_usuario
             ");
             var lista = new List<object>();
             foreach (DataRow row in dt.Rows)
             {
                 lista.Add(new
                 {
-                    id = row["ID"].ToString(),
-                    nombre = row["Nombre"].ToString(),
-                    descripcion = row["Descripcion"].ToString(),
-                    laboratorio = row["NombreLaboratorio"].ToString(),
-                    responsable = row["NombreResponsable"].ToString(),
-                    equipo = row["NombreEquipo"]?.ToString()
+                    id = row["id_proyecto"],
+                    nombre = row["nombrep"],
+                    descripcion = row["descripcion"],
+                    id_responsable = row["id_responsable"],
+                    responsable = row["nombre_responsable"]
                 });
             }
             return Request.CreateResponse(HttpStatusCode.OK, lista);
@@ -51,80 +47,29 @@ namespace AppWeb.Controllers.ApiBD
             var db = new DataBaseHelper();
             var dt = db.SelectTable($@"
                 SELECT 
-                    P.ID, 
-                    P.Nombre, 
-                    P.Descripcion, 
-                    P.Laboratorio, 
-                    L.Nombre AS NombreLaboratorio, 
-                    P.Responsable, 
-                    U.Nombre AS NombreResponsable,
-                    P.Equipo,
-                    E.Nombre AS NombreEquipo
-                FROM Proyectos P
-                LEFT JOIN Laboratorios L ON P.Laboratorio = L.ID
-                LEFT JOIN Usuarios U ON P.Responsable = U.ID
-                LEFT JOIN Equipos E ON P.Equipo = E.ID
-                WHERE P.ID = {id}
+                    P.id_proyecto, 
+                    P.nombrep, 
+                    P.descripcion, 
+                    P.id_responsable,
+                    U.Nombre AS nombre_responsable
+                FROM PROYECTOS P
+                LEFT JOIN USUARIOS U ON P.id_responsable = U.id_usuario
+                WHERE P.id_proyecto = {id}
             ");
             if (dt.Rows.Count == 1)
             {
                 var row = dt.Rows[0];
                 var proyecto = new
                 {
-                    id = row["ID"].ToString(),
-                    nombre = row["Nombre"].ToString(),
-                    descripcion = row["Descripcion"].ToString(),
-                    laboratorioId = row["Laboratorio"].ToString(),
-                    laboratorio = row["NombreLaboratorio"].ToString(),
-                    responsableId = row["Responsable"].ToString(),
-                    responsable = row["NombreResponsable"].ToString(),
-                    equipoId = row["Equipo"].ToString(),
-                    equipo = row["NombreEquipo"]?.ToString()
+                    id = row["id_proyecto"],
+                    nombre = row["nombrep"],
+                    descripcion = row["descripcion"],
+                    id_responsable = row["id_responsable"],
+                    responsable = row["nombre_responsable"]
                 };
                 return Request.CreateResponse(HttpStatusCode.OK, proyecto);
             }
             return Request.CreateResponse(HttpStatusCode.NotFound, "Proyecto no encontrado");
-        }
-
-        [HttpGet]
-        [Route("ObtenerPorLaboratorio")]
-        public HttpResponseMessage ObtenerPorLaboratorio(int idLaboratorio)
-        {
-            var db = new DataBaseHelper();
-            var dt = db.SelectTable($@"
-                SELECT 
-                    P.ID, 
-                    P.Nombre, 
-                    P.Descripcion, 
-                    P.Laboratorio, 
-                    L.Nombre AS NombreLaboratorio, 
-                    P.Responsable, 
-                    U.Nombre AS NombreResponsable,
-                    P.Equipo,
-                    E.Nombre AS NombreEquipo
-                FROM Proyectos P
-                LEFT JOIN Laboratorios L ON P.Laboratorio = L.ID
-                LEFT JOIN Usuarios U ON P.Responsable = U.ID
-                LEFT JOIN Equipos E ON P.Equipo = E.ID
-                WHERE P.Laboratorio = {idLaboratorio}
-            ");
-            var lista = new List<object>();
-            foreach (DataRow row in dt.Rows)
-            {
-                lista.Add(new
-                {
-                    id = row["ID"].ToString(),
-                    nombre = row["Nombre"].ToString(),
-                    descripcion = row["Descripcion"].ToString(),
-                    laboratorioId = row["Laboratorio"].ToString(),
-                    laboratorio = row["NombreLaboratorio"].ToString(),
-                    responsableId = row["Responsable"].ToString(),
-                    responsable = row["NombreResponsable"].ToString(),
-                    equipoId = row["Equipo"].ToString(),
-                    equipo = row["NombreEquipo"]?.ToString()
-                });
-            }
-            return Request.CreateResponse(HttpStatusCode.OK, lista);
         }
 
         [HttpPost]
@@ -135,23 +80,19 @@ namespace AppWeb.Controllers.ApiBD
             {
                 string nombre = datos.nombre;
                 string descripcion = datos.descripcion;
-                int laboratorio = datos.laboratorioId;
-                int responsable = datos.responsableId;
-                int equipo = datos.equipoId;
+                int id_responsable = datos.id_responsable;
 
-                if (string.IsNullOrEmpty(nombre) || string.IsNullOrEmpty(descripcion) || laboratorio <= 0 || responsable <= 0 || equipo <= 0)
+                if (string.IsNullOrEmpty(nombre) || id_responsable <= 0)
                     return Request.CreateResponse(HttpStatusCode.BadRequest, "Datos incompletos");
 
                 var db = new DataBaseHelper();
                 var data = new Dictionary<string, object>
                 {
-                    { "Nombre", nombre },
-                    { "Descripcion", descripcion },
-                    { "Laboratorio", laboratorio },
-                    { "Responsable", responsable },
-                    { "Equipo", equipo }
+                    { "nombrep", nombre },
+                    { "descripcion", descripcion },
+                    { "id_responsable", id_responsable }
                 };
-                bool insertado = db.InsertRow("Proyectos", data);
+                bool insertado = db.InsertRow("PROYECTOS", data);
                 if (insertado)
                     return Request.CreateResponse(HttpStatusCode.OK, "Proyecto creado correctamente");
                 else
@@ -172,23 +113,19 @@ namespace AppWeb.Controllers.ApiBD
                 int id = datos.id;
                 string nombre = datos.nombre;
                 string descripcion = datos.descripcion;
-                int laboratorio = datos.laboratorioId;
-                int responsable = datos.responsableId;
-                int equipo = datos.equipoId;
+                int id_responsable = datos.id_responsable;
 
-                if (id <= 0 || string.IsNullOrEmpty(nombre) || string.IsNullOrEmpty(descripcion) || laboratorio < 0 || responsable < 0 || equipo < 0)
+                if (id <= 0 || string.IsNullOrEmpty(nombre) || id_responsable <= 0)
                     return Request.CreateResponse(HttpStatusCode.BadRequest, "Datos incompletos");
 
                 var db = new DataBaseHelper();
                 var data = new Dictionary<string, object>
                 {
-                    { "Nombre", nombre },
-                    { "Descripcion", descripcion },
-                    { "Laboratorio", laboratorio },
-                    { "Responsable", responsable },
-                    { "Equipo", equipo }
+                    { "nombrep", nombre },
+                    { "descripcion", descripcion },
+                    { "id_responsable", id_responsable }
                 };
-                bool actualizado = db.UpdateRow("Proyectos", data, $"ID={id}");
+                bool actualizado = db.UpdateRow("PROYECTOS", data, $"id_proyecto={id}");
                 if (actualizado)
                     return Request.CreateResponse(HttpStatusCode.OK, "Proyecto modificado correctamente");
                 else
@@ -207,11 +144,66 @@ namespace AppWeb.Controllers.ApiBD
             try
             {
                 var db = new DataBaseHelper();
-                bool eliminado = db.DeleteRow("Proyectos", $"ID={id}");
+                bool eliminado = db.DeleteRow("PROYECTOS", $"id_proyecto={id}");
                 if (eliminado)
                     return Request.CreateResponse(HttpStatusCode.OK, "Proyecto eliminado correctamente");
                 else
                     return Request.CreateResponse(HttpStatusCode.NotFound, "No se encontró el proyecto");
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, ex.Message);
+            }
+        }
+
+        [HttpGet]
+        [Route("UsuariosPorProyecto")]
+        public HttpResponseMessage UsuariosPorProyecto(int idProyecto)
+        {
+            var db = new DataBaseHelper();
+            var dt = db.SelectTable($@"
+                SELECT U.id_usuario, U.Nombre, U.correo, U.rol
+                FROM PROYECTO_USUARIO PU
+                INNER JOIN USUARIOS U ON PU.id_usuario = U.id_usuario
+                WHERE PU.id_proyecto = {idProyecto}
+            ");
+            var lista = new List<object>();
+            foreach (DataRow row in dt.Rows)
+            {
+                lista.Add(new
+                {
+                    id_usuario = row["id_usuario"],
+                    nombre = row["Nombre"],
+                    correo = row["correo"],
+                    rol = row["rol"]
+                });
+            }
+            return Request.CreateResponse(HttpStatusCode.OK, lista);
+        }
+
+        [HttpPost]
+        [Route("AgregarUsuarioAProyecto")]
+        public HttpResponseMessage AgregarUsuarioAProyecto([FromBody] dynamic datos)
+        {
+            try
+            {
+                int id_usuario = datos.id_usuario;
+                int id_proyecto = datos.id_proyecto;
+
+                if (id_usuario <= 0 || id_proyecto <= 0)
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, "Datos incompletos");
+
+                var db = new DataBaseHelper();
+                var data = new Dictionary<string, object>
+                {
+                    { "id_usuario", id_usuario },
+                    { "id_proyecto", id_proyecto }
+                };
+                bool insertado = db.InsertRow("PROYECTO_USUARIO", data);
+                if (insertado)
+                    return Request.CreateResponse(HttpStatusCode.OK, "Usuario agregado al proyecto correctamente");
+                else
+                    return Request.CreateResponse(HttpStatusCode.InternalServerError, "Error al agregar usuario al proyecto");
             }
             catch (Exception ex)
             {

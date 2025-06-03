@@ -15,14 +15,29 @@
         <input type="text" id="proyecto_nombre" maxlength="255" class="form-control" /><br />
         <label>Descripción:</label>
         <input type="text" id="proyecto_descripcion" maxlength="255" class="form-control" /><br />
-        <label>Laboratorio:</label>
-        <select id="proyecto_laboratorio" class="form-control"></select><br />
         <label>Responsable:</label>
         <select id="proyecto_responsable" class="form-control"></select><br />
-        <label>Equipo:</label>
-        <select id="proyecto_equipo" class="form-control"></select><br />
         <button type="button" onclick="guardarProyecto()" class="btn btn-success">Guardar</button>
         <button type="button" onclick="cerrarModalProyecto()" class="btn btn-secondary">Cancelar</button>
+    </div>
+</div>
+
+<!-- Modal para usuarios del proyecto -->
+<div id="modalUsuarios" class="modal" tabindex="-1" style="display:none; position:fixed; z-index:1050; left:0; top:0; width:100%; height:100%; overflow:auto; background:rgba(0,0,0,0.5);">
+    <div style="background:#fff; margin:5% auto; padding:20px; border-radius:8px; width:400px; position:relative;">
+        <span style="position:absolute; top:10px; right:15px; cursor:pointer; font-size:20px;" onclick="cerrarModalUsuarios()">&times;</span>
+        <h3>Usuarios del Proyecto</h3>
+        <table id="tablaUsuarios" class="display" style="width:100%">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Correo</th>
+                    <th>Rol</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
     </div>
 </div>
 
@@ -32,9 +47,7 @@
             <th>ID</th>
             <th>Nombre</th>
             <th>Descripción</th>
-            <th>Laboratorio</th>
             <th>Responsable</th>
-            <th>Equipo</th>
             <th>Opciones</th>
         </tr>
     </thead>
@@ -45,9 +58,7 @@
     let tablaProyectos;
 
     document.addEventListener("DOMContentLoaded", function () {
-        cargarLaboratorios();
         cargarResponsables();
-        cargarEquipos();
         tablaProyectos = new DataTable('#tablaProyectos', {
             ajax: {
                 url: '/api/Proyectos/ObtenerTodos',
@@ -57,9 +68,7 @@
                 { data: 'id' },
                 { data: 'nombre' },
                 { data: 'descripcion' },
-                { data: 'laboratorio' },
                 { data: 'responsable' },
-                { data: 'equipo' },
                 {
                     data: null,
                     orderable: false,
@@ -67,6 +76,7 @@
                         return `
                         <button type="button" class="btn btn-primary" onclick="editarProyecto('${row.id}')">Editar</button>
                         <button type="button" class="btn btn-danger" onclick="eliminarProyecto('${row.id}')">Eliminar</button>
+                        <button type="button" class="btn btn-info" onclick="verUsuarios('${row.id}')">Usuarios</button>
                     `;
                     }
                 }
@@ -81,38 +91,14 @@
         if (tablaProyectos) tablaProyectos.ajax.reload();
     }
 
-    function cargarLaboratorios() {
-        fetch('/api/Laboratorios/ObtenerLaboratorios')
-            .then(r => r.json())
-            .then(data => {
-                const select = document.getElementById("proyecto_laboratorio");
-                select.innerHTML = '<option value="">Seleccione laboratorio</option>';
-                data.forEach(lab => {
-                    select.innerHTML += `<option value="${lab.Id}">${lab.nombre}</option>`;
-                });
-            });
-    }
-
     function cargarResponsables() {
-        fetch('/api/Laboratorios/ObtenerProfesoresOEmpleados')
+        fetch('/api/Usuarios/ObtenerTodos')
             .then(r => r.json())
             .then(data => {
                 const select = document.getElementById("proyecto_responsable");
                 select.innerHTML = '<option value="">Seleccione responsable</option>';
                 data.forEach(u => {
-                    select.innerHTML += `<option value="${u.ID}">${u.Nombre} (${u.Rol})</option>`;
-                });
-            });
-    }
-
-    function cargarEquipos() {
-        fetch('/api/Equipos/ObtenerTodos')
-            .then(r => r.json())
-            .then(data => {
-                const select = document.getElementById("proyecto_equipo");
-                select.innerHTML = '<option value="">Seleccione equipo</option>';
-                data.forEach(eq => {
-                    select.innerHTML += `<option value="${eq.id}">${eq.nombre}</option>`;
+                    select.innerHTML += `<option value="${u.id_usuario}">${u.Nombre} (${u.rol})</option>`;
                 });
             });
     }
@@ -122,12 +108,8 @@
         document.getElementById("proyecto_id").value = "";
         document.getElementById("proyecto_nombre").value = "";
         document.getElementById("proyecto_descripcion").value = "";
-        document.getElementById("proyecto_laboratorio").value = "";
         document.getElementById("proyecto_responsable").value = "";
-        document.getElementById("proyecto_equipo").value = "";
-        cargarLaboratorios();
         cargarResponsables();
-        cargarEquipos();
         document.getElementById("modalProyecto").style.display = "block";
     }
 
@@ -139,11 +121,9 @@
         const id = document.getElementById("proyecto_id").value;
         const nombre = document.getElementById("proyecto_nombre").value;
         const descripcion = document.getElementById("proyecto_descripcion").value;
-        const laboratorioId = document.getElementById("proyecto_laboratorio").value;
-        const responsableId = document.getElementById("proyecto_responsable").value;
-        const equipoId = document.getElementById("proyecto_equipo").value;
+        const id_responsable = document.getElementById("proyecto_responsable").value;
 
-        if (!nombre || !descripcion || !laboratorioId || !responsableId || !equipoId) {
+        if (!nombre || !id_responsable) {
             alert("Todos los campos son obligatorios.");
             return;
         }
@@ -151,9 +131,7 @@
         const body = {
             nombre,
             descripcion,
-            laboratorioId: parseInt(laboratorioId),
-            responsableId: parseInt(responsableId),
-            equipoId: parseInt(equipoId)
+            id_responsable: parseInt(id_responsable)
         };
 
         if (id) {
@@ -192,13 +170,9 @@
                 document.getElementById("proyecto_id").value = data.id;
                 document.getElementById("proyecto_nombre").value = data.nombre;
                 document.getElementById("proyecto_descripcion").value = data.descripcion;
-                cargarLaboratorios();
                 cargarResponsables();
-                cargarEquipos();
                 setTimeout(() => {
-                    document.getElementById("proyecto_laboratorio").value = data.laboratorioId;
-                    document.getElementById("proyecto_responsable").value = data.responsableId;
-                    document.getElementById("proyecto_equipo").value = data.equipoId;
+                    document.getElementById("proyecto_responsable").value = data.id_responsable;
                 }, 300);
                 document.getElementById("modalProyecto").style.display = "block";
             });
@@ -212,6 +186,29 @@
             .then(r => r.ok ? r.text() : Promise.reject(r.text()))
             .then(() => recargarTablaProyectos())
             .catch(async err => alert(await err));
+    }
+
+    // Usuarios por proyecto
+    function verUsuarios(idProyecto) {
+        fetch(`/api/Proyectos/UsuariosPorProyecto?idProyecto=${idProyecto}`)
+            .then(r => r.json())
+            .then(data => {
+                const tbody = document.querySelector("#tablaUsuarios tbody");
+                tbody.innerHTML = "";
+                data.forEach(u => {
+                    tbody.innerHTML += `<tr>
+                        <td>${u.id_usuario}</td>
+                        <td>${u.nombre}</td>
+                        <td>${u.correo}</td>
+                        <td>${u.rol}</td>
+                    </tr>`;
+                });
+                document.getElementById("modalUsuarios").style.display = "block";
+            });
+    }
+
+    function cerrarModalUsuarios() {
+        document.getElementById("modalUsuarios").style.display = "none";
     }
 </script>
 </asp:Content>

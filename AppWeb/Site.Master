@@ -76,7 +76,6 @@
                         <li class="nav-item"><a class="nav-link" runat="server" href="~/">Inicio</a></li>
                         <li class="nav-item"><a class="nav-link" runat="server" href="~/Alertas">Alertas</a></li>
                         <li class="nav-item"><a class="nav-link" runat="server" href="~/Componentes">Componentes</a></li>
-                        <li class="nav-item"><a class="nav-link" runat="server" href="~/Equipo">Equipo</a></li>
                         <li class="nav-item"><a class="nav-link" runat="server" href="~/Laboratorio">Laboratorio</a></li>
                         <li class="nav-item"><a class="nav-link" runat="server" href="~/Prestamos">Prestamos</a></li>
                         <li class="nav-item"><a class="nav-link" runat="server" href="~/Proyectos">Proyectos</a></li>

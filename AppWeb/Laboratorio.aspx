@@ -48,11 +48,14 @@
     <script>
         let tabla;
         function abrirModalEditar(id, nombre, descripcion, responsable) {
-            // Llena los campos del modal
             document.getElementById("modal_idLaboratorio").value = id;
             document.getElementById("modal_nombreLaboratorio").value = nombre;
             document.getElementById("modal_descripcionLaboratorio").value = descripcion;
 
+            // Cargar responsables y seleccionar el actual
+            cargarResponsables(() => {
+                document.getElementById("modal_responsableLaboratorio").value = responsable;
+            }, "modal_responsableLaboratorio");
 
             // Carga los proyectos asociados al laboratorio
             fetch(`/api/Laboratorios/ObtenerPorLaboratorio?idLaboratorio=${id}`)
@@ -69,21 +72,20 @@
                     }
                 });
 
-            // Muestra el modal
             document.getElementById("modalEditarLaboratorio").style.display = "block";
         }
         function guardarCambiosLaboratorio() {
             const id = document.getElementById("modal_idLaboratorio").value;
             const nombre = document.getElementById("modal_nombreLaboratorio").value;
             const descripcion = document.getElementById("modal_descripcionLaboratorio").value;
-            const responsable = document.getElementById("modal_responsableLaboratorio").value;
+            const id_responsable = document.getElementById("modal_responsableLaboratorio").value;
 
-            if (!nombre || !descripcion || !responsable) {
-                alert("Nombre, descripción y responsable son obligatorios.");
+            if (!nombre || !id_responsable) {
+                alert("Nombre y responsable son obligatorios.");
                 return;
             }
 
-            const body = { id_laboratorio: id, nombre, descripcion, responsable };
+            const body = { id_laboratorio: id, nombre, descripcion, id_responsable };
 
             fetch('/api/Laboratorios/ModificarLaboratorio', {
                 method: 'PUT',
@@ -119,11 +121,10 @@
                         orderable: false,
                         render: function (data, type, row) {
                             return `
-        <button type="button" class="btn btn-primary" onclick="abrirModalEditar('${row.Id}', '${row.nombre}', '${row.descripcion}', '${row.Responsable}')">Editar</button>
+        <button type="button" class="btn btn-primary" onclick="abrirModalEditar('${row.Id}', '${row.nombre}', '${row.descripcion}', '${row.ResponsableId}')">Editar</button>
         <button type="button" class="btn btn-danger" onclick="eliminarLaboratorio('${row.Id}')">Eliminar</button>
     `;
                         }
-
                     }
                 ],
                 language: {
@@ -132,21 +133,16 @@
             });
         });
 
-        function cargarResponsables() {
+        function cargarResponsables(callback, selectId) {
             fetch('/api/Laboratorios/ObtenerProfesoresOEmpleados')
                 .then(r => r.json())
                 .then(data => {
-                    const select = document.getElementById("responsableLaboratorio");
+                    const select = document.getElementById(selectId || "responsableLaboratorio");
                     select.innerHTML = '<option value="">Seleccione responsable</option>';
                     data.forEach(u => {
                         select.innerHTML += `<option value="${u.ID}">${u.Nombre} (${u.Rol})</option>`;
                     });
-                    const select2 = document.getElementById("modal_responsableLaboratorio");
-                    select2.innerHTML = '<option value="">Seleccione responsable</option>';
-                    data.forEach(u => {
-                        select2.innerHTML += `<option value="${u.ID}">${u.Nombre} (${u.Rol})</option>`;
-                    });
-
+                    if (callback) callback();
                 });
         }
 
@@ -168,30 +164,27 @@
         }
 
         function guardarLaboratorio() {
-            const id = document.getElementById("idLaboratorio").value;
             const nombre = document.getElementById("nombreLaboratorio").value;
             const descripcion = document.getElementById("descripcionLaboratorio").value;
-            const responsable = document.getElementById("responsableLaboratorio").value;
+            const id_responsable = document.getElementById("responsableLaboratorio").value;
 
-            if (!nombre || !descripcion || !responsable) {
-                alert("Nombre, descripción y responsable son obligatorios.");
+            if (!nombre || !id_responsable) {
+                alert("Nombre y responsable son obligatorios.");
                 return;
             }
 
-            const body = { nombre, descripcion, responsable };
-                fetch('/api/Laboratorios/CrearLaboratorio', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(body)
-                }).then(r => r.ok ? r.text() : Promise.reject(r.text()))
-                    .then(() => {
-                        recargarTabla();
-                        cancelarEdicion();
-                    })
-                    .catch(async err => alert(await err));
+            const body = { nombre, descripcion, id_responsable };
+            fetch('/api/Laboratorios/CrearLaboratorio', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(body)
+            }).then(r => r.ok ? r.text() : Promise.reject(r.text()))
+                .then(() => {
+                    recargarTabla();
+                    cancelarEdicion();
+                })
+                .catch(async err => alert(await err));
         }
-
-
 
         function eliminarLaboratorio(id) {
             if (!confirm("¿Seguro que deseas eliminar este laboratorio?")) return;
