@@ -290,6 +290,7 @@
     <Content Include="Componentes.aspx" />
     <Compile Include="Controllers\ApiBD\ApiProyectosController.cs" />
     <Compile Include="Controllers\ApiBD\ApiLaboratorioController.cs" />
+    <Compile Include="Controllers\ApiBD\ApiUsuariosController.cs" />
     <Compile Include="DataBaseHelper.cs" />
     <Compile Include="Laboratorio.aspx.cs">
       <DependentUpon>Laboratorio.aspx</DependentUpon>
