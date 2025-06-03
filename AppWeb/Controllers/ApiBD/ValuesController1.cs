@@ -77,19 +77,19 @@ namespace AppWeb.Controllers.ApiBD
                     return Request.CreateResponse(HttpStatusCode.BadRequest, "Datos incompletos");
 
                 var db = new DataBaseHelper();
-                var dt = db.SelectTable($"SELECT * FROM Login left join Usuarios on IDUsuario=ID WHERE Correo='{Correo}'");
+                var dt = db.SelectTable($"select * from USUARIOS where correo='{Correo}'");
                 var Confirmar = Hash(password);
                 if (dt.Rows.Count == 1)
                 {
-                    string hash = dt.Rows[0]["Password"].ToString();
+                    string hash = dt.Rows[0]["password"].ToString();
                     if (VerifyHashedPassword(hash, password))
                     {
                         // Devuelve datos para sessionStorage
                         var result = new
                         {
                             logueado = true,
-                            ID = dt.Rows[0]["ID"].ToString(),
-                            tipo = dt.Rows[0]["PuedeAutorizar"].ToString() == "1",
+                            ID = dt.Rows[0]["id_usuario"].ToString(),
+                            tipo = dt.Rows[0]["puede_autorizar"].ToString() == "1",
                             nombre = dt.Rows[0]["Nombre"].ToString()
                         };
                         return Request.CreateResponse(HttpStatusCode.OK, result);

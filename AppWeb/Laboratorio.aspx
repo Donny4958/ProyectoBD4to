@@ -1,6 +1,7 @@
 ﻿<%@ Page Language="C#" AutoEventWireup="true" MasterPageFile="~/Site.Master" CodeBehind="Laboratorio.aspx.cs" Inherits="AppWeb.Laboratorio" %>
-
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
+<link rel="stylesheet" href="https://cdn.datatables.net/2.3.1/css/dataTables.dataTables.css" />  
+<script src="https://cdn.datatables.net/2.3.1/js/dataTables.js"></script>
     <h2>Laboratorios</h2>
     <button type="button" onclick="mostrarFormularioCrear()">Crear nuevo laboratorio</button>
     <div id="formularioLaboratorio" style="display: none; margin-top: 20px;">
@@ -9,48 +10,152 @@
         <input type="text" id="nombreLaboratorio" maxlength="100" /><br />
         <label>Descripción:</label>
         <input type="text" id="descripcionLaboratorio" maxlength="255" /><br />
+        <label>Responsable:</label>
+        <select id="responsableLaboratorio"></select><br />
         <button type="button" onclick="guardarLaboratorio()">Guardar</button>
         <button type="button" onclick="cancelarEdicion()">Cancelar</button>
     </div>
-    <table border="1" style="margin-top: 20px; width: 100%;">
+    <div id="modalEditarLaboratorio" class="modal" tabindex="-1" style="display:none; position:fixed; z-index:1050; left:0; top:0; width:100%; height:100%; overflow:auto; background:rgba(0,0,0,0.5);">
+    <div style="background:#fff; margin:5% auto; padding:20px; border-radius:8px; width:400px; position:relative;">
+        <span style="position:absolute; top:10px; right:15px; cursor:pointer; font-size:20px;" onclick="cerrarModalEditar()">&times;</span>
+        <h3>Editar Laboratorio</h3>
+        <input type="hidden" id="modal_idLaboratorio" />
+        <label>Nombre:</label>
+        <input type="text" id="modal_nombreLaboratorio" maxlength="100" class="form-control" /><br />
+        <label>Descripción:</label>
+        <input type="text" id="modal_descripcionLaboratorio" maxlength="255" class="form-control" /><br />
+        <label>Responsable:</label>
+        <select id="modal_responsableLaboratorio" class="form-control"></select><br />
+        <button type="button" onclick="guardarCambiosLaboratorio()" class="btn btn-success">Guardar cambios</button>
+        <button type="button" onclick="cerrarModalEditar()" class="btn btn-secondary">Cancelar</button>
+        <hr />
+        <h4>Proyectos de este laboratorio</h4>
+        <ul id="modal_listaProyectos"></ul>
+    </div>
+</div>
+    <table id="tablaLaboratorios" class="display" style="width:100%">
         <thead>
             <tr>
                 <th>ID</th>
                 <th>Nombre</th>
                 <th>Descripción</th>
+                <th>Responsable</th>
                 <th>Opciones</th>
             </tr>
         </thead>
-        <tbody id="tablaLaboratorios"></tbody>
+        <tbody></tbody>
     </table>
     <script>
-        document.addEventListener("DOMContentLoaded", cargarLaboratorios);
+        let tabla;
+        function abrirModalEditar(id, nombre, descripcion, responsable) {
+            document.getElementById("modal_idLaboratorio").value = id;
+            document.getElementById("modal_nombreLaboratorio").value = nombre;
+            document.getElementById("modal_descripcionLaboratorio").value = descripcion;
 
-        function cargarLaboratorios() {
-            fetch('/api/Laboratorios/ObtenerLaboratorios')
+            // Cargar responsables y seleccionar el actual
+            cargarResponsables(() => {
+                document.getElementById("modal_responsableLaboratorio").value = responsable;
+            }, "modal_responsableLaboratorio");
+
+            // Carga los proyectos asociados al laboratorio
+            fetch(`/api/Laboratorios/ObtenerPorLaboratorio?idLaboratorio=${id}`)
                 .then(r => r.json())
                 .then(data => {
-                    const tbody = document.getElementById("tablaLaboratorios");
-                    tbody.innerHTML = "";
-                    data.forEach(lab => {
-                        tbody.innerHTML += `
-                            <tr>
-                                <td>${lab.id_laboratorio}</td>
-                                <td>${lab.nombre}</td>
-                                <td>${lab.descripcion}</td>
-                                <td>
-                                    <button onclick="editarLaboratorio('${lab.id_laboratorio}', '${lab.nombre}', '${lab.descripcion}')">Editar</button>
-                                    <button onclick="eliminarLaboratorio('${lab.id_laboratorio}')">Eliminar</button>
-                                </td>
-                            </tr>`;
-                    });
+                    const ul = document.getElementById("modal_listaProyectos");
+                    ul.innerHTML = "";
+                    if (data && data.length > 0) {
+                        data.forEach(p => {
+                            ul.innerHTML += `<li>${p.Nombre} (${p.Descripcion})</li>`;
+                        });
+                    } else {
+                        ul.innerHTML = "<li>No hay proyectos asociados.</li>";
+                    }
                 });
+
+            document.getElementById("modalEditarLaboratorio").style.display = "block";
+        }
+        function guardarCambiosLaboratorio() {
+            const id = document.getElementById("modal_idLaboratorio").value;
+            const nombre = document.getElementById("modal_nombreLaboratorio").value;
+            const descripcion = document.getElementById("modal_descripcionLaboratorio").value;
+            const id_responsable = document.getElementById("modal_responsableLaboratorio").value;
+
+            if (!nombre || !id_responsable) {
+                alert("Nombre y responsable son obligatorios.");
+                return;
+            }
+
+            const body = { id_laboratorio: id, nombre, descripcion, id_responsable };
+
+            fetch('/api/Laboratorios/ModificarLaboratorio', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(body)
+            })
+                .then(r => r.ok ? r.text() : Promise.reject(r.text()))
+                .then(() => {
+                    recargarTabla();
+                    cerrarModalEditar();
+                })
+                .catch(async err => alert(await err));
+        }
+
+        function cerrarModalEditar() {
+            document.getElementById("modalEditarLaboratorio").style.display = "none";
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            cargarResponsables();
+            tabla = new DataTable('#tablaLaboratorios', {
+                ajax: {
+                    url: '/api/Laboratorios/ObtenerLaboratorios',
+                    dataSrc: ''
+                },
+                columns: [
+                    { data: 'Id' },
+                    { data: 'nombre' },
+                    { data: 'descripcion' },
+                    { data: 'Responsable' },
+                    {
+                        data: null,
+                        orderable: false,
+                        render: function (data, type, row) {
+                            return `
+        <button type="button" class="btn btn-primary" onclick="abrirModalEditar('${row.Id}', '${row.nombre}', '${row.descripcion}', '${row.ResponsableId}')">Editar</button>
+        <button type="button" class="btn btn-danger" onclick="eliminarLaboratorio('${row.Id}')">Eliminar</button>
+    `;
+                        }
+                    }
+                ],
+                language: {
+                    url: '//cdn.datatables.net/plug-ins/2.3.1/i18n/es-ES.json'
+                }
+            });
+        });
+
+        function cargarResponsables(callback, selectId) {
+            fetch('/api/Laboratorios/ObtenerProfesoresOEmpleados')
+                .then(r => r.json())
+                .then(data => {
+                    const select = document.getElementById(selectId || "responsableLaboratorio");
+                    select.innerHTML = '<option value="">Seleccione responsable</option>';
+                    data.forEach(u => {
+                        select.innerHTML += `<option value="${u.ID}">${u.Nombre} (${u.Rol})</option>`;
+                    });
+                    if (callback) callback();
+                });
+        }
+
+        function recargarTabla() {
+            if (tabla) tabla.ajax.reload();
         }
 
         function mostrarFormularioCrear() {
             document.getElementById("idLaboratorio").value = "";
             document.getElementById("nombreLaboratorio").value = "";
             document.getElementById("descripcionLaboratorio").value = "";
+            document.getElementById("responsableLaboratorio").value = "";
+            cargarResponsables();
             document.getElementById("formularioLaboratorio").style.display = "block";
         }
 
@@ -59,49 +164,26 @@
         }
 
         function guardarLaboratorio() {
-            const id = document.getElementById("idLaboratorio").value;
             const nombre = document.getElementById("nombreLaboratorio").value;
             const descripcion = document.getElementById("descripcionLaboratorio").value;
+            const id_responsable = document.getElementById("responsableLaboratorio").value;
 
-            if (!nombre || !descripcion) {
-                alert("Nombre y descripción son obligatorios.");
+            if (!nombre || !id_responsable) {
+                alert("Nombre y responsable son obligatorios.");
                 return;
             }
 
-            if (id) {
-                // Modificar laboratorio
-                fetch('/api/Laboratorios/ModificarLaboratorio', {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ id_laboratorio: id, nombre, descripcion })
+            const body = { nombre, descripcion, id_responsable };
+            fetch('/api/Laboratorios/CrearLaboratorio', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(body)
+            }).then(r => r.ok ? r.text() : Promise.reject(r.text()))
+                .then(() => {
+                    recargarTabla();
+                    cancelarEdicion();
                 })
-                    .then(r => r.ok ? r.text() : Promise.reject(r.text()))
-                    .then(() => {
-                        cargarLaboratorios();
-                        cancelarEdicion();
-                    })
-                    .catch(async err => alert(await err));
-            } else {
-                // Crear laboratorio
-                fetch('/api/Laboratorios/CrearLaboratorio', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ nombre, descripcion })
-                })
-                    .then(r => r.ok ? r.text() : Promise.reject(r.text()))
-                    .then(() => {
-                        cargarLaboratorios();
-                        cancelarEdicion();
-                    })
-                    .catch(async err => alert(await err));
-            }
-        }
-
-        function editarLaboratorio(id, nombre, descripcion) {
-            document.getElementById("idLaboratorio").value = id;
-            document.getElementById("nombreLaboratorio").value = nombre;
-            document.getElementById("descripcionLaboratorio").value = descripcion;
-            document.getElementById("formularioLaboratorio").style.display = "block";
+                .catch(async err => alert(await err));
         }
 
         function eliminarLaboratorio(id) {
@@ -110,7 +192,7 @@
                 method: 'DELETE'
             })
                 .then(r => r.ok ? r.text() : Promise.reject(r.text()))
-                .then(() => cargarLaboratorios())
+                .then(() => recargarTabla())
                 .catch(async err => alert(await err));
         }
     </script>
