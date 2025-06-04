@@ -22,8 +22,8 @@ namespace AppWeb.Controllers.ApiBD
                     d.nombre,
                     d.descripcion,
                     d.foto,
-                    d.claveproducto,
-                    d.fechaadquisicion,
+                    d.clave_producto,
+                    d.fecha_adquisicion,
                     d.costo,
                     d.donado,
                     d.proveedor,
@@ -43,8 +43,8 @@ namespace AppWeb.Controllers.ApiBD
                     nombre = row["nombre"],
                     descripcion = row["descripcion"],
                     foto = row["foto"] == DBNull.Value ? null : row["foto"].ToString(),
-                    claveproducto = row["claveproducto"],
-                    fechaadquisicion = row["fechaadquisicion"] == DBNull.Value ? null : Convert.ToDateTime(row["fechaadquisicion"]).ToString("yyyy-MM-dd"),
+                    clave_producto = row["clave_producto"],
+                    fecha_adquisicion = row["fecha_adquisicion"] == DBNull.Value ? null : Convert.ToDateTime(row["fecha_adquisicion"]).ToString("yyyy-MM-dd"),
                     costo = row["costo"] == DBNull.Value ? (decimal?)null : Convert.ToDecimal(row["costo"]),
                     donado = row["donado"] == DBNull.Value ? (bool?)null : Convert.ToBoolean(row["donado"]),
                     proveedor = row["proveedor"],
@@ -71,8 +71,8 @@ namespace AppWeb.Controllers.ApiBD
                     d.nombre,
                     d.descripcion,
                     d.foto,
-                    d.claveproducto,
-                    d.fechaadquisicion,
+                    d.clave_producto,
+                    d.fecha_adquisicion,
                     d.costo,
                     d.donado,
                     d.proveedor,
@@ -93,8 +93,8 @@ namespace AppWeb.Controllers.ApiBD
                     nombre = row["nombre"],
                     descripcion = row["descripcion"],
                     foto = row["foto"] == DBNull.Value ? null : row["foto"].ToString(),
-                    claveproducto = row["claveproducto"],
-                    fechaadquisicion = row["fechaadquisicion"] == DBNull.Value ? null : Convert.ToDateTime(row["fechaadquisicion"]).ToString("yyyy-MM-dd"),
+                    clave_producto = row["clave_producto"],
+                    fecha_adquisicion = row["fecha_adquisicion"] == DBNull.Value ? null : Convert.ToDateTime(row["fecha_adquisicion"]).ToString("yyyy-MM-dd"),
                     costo = row["costo"] == DBNull.Value ? (decimal?)null : Convert.ToDecimal(row["costo"]),
                     donado = row["donado"] == DBNull.Value ? (bool?)null : Convert.ToBoolean(row["donado"]),
                     proveedor = row["proveedor"],
@@ -120,8 +120,8 @@ namespace AppWeb.Controllers.ApiBD
                 string nombre = datos.nombre;
                 string descripcion = datos.descripcion;
                 string foto = datos.foto;
-                string claveproducto = datos.claveproducto;
-                string fechaadquisicion = datos.fechaadquisicion;
+                string clave_producto = datos.clave_producto;
+                string fecha_adquisicion = datos.fecha_adquisicion;
                 decimal? costo = datos.costo != null ? (decimal)datos.costo : (decimal?)null;
                 bool? donado = datos.donado != null ? (bool)datos.donado : (bool?)null;
                 string proveedor = datos.proveedor;
@@ -137,8 +137,8 @@ namespace AppWeb.Controllers.ApiBD
                     { "nombre", nombre },
                     { "descripcion", descripcion },
                     { "foto", foto },
-                    { "claveproducto", claveproducto },
-                    { "fechaadquisicion", fechaadquisicion },
+                    { "clave_producto", clave_producto },
+                    { "fecha_adquisicion", fecha_adquisicion },
                     { "costo", costo },
                     { "donado", donado.HasValue ? (donado.Value ? 1 : 0) : (object)DBNull.Value },
                     { "proveedor", proveedor },
@@ -157,12 +157,39 @@ namespace AppWeb.Controllers.ApiBD
         }
 
         [HttpPut]
-        [Route("Modificar")]
-        public HttpResponseMessage Modificar([FromBody] dynamic datos)
+        [Route("ModificarParcial")]
+        public HttpResponseMessage ModificarParcial([FromBody] dynamic datos)
         {
-            // Edición deshabilitada
-            return Request.CreateResponse(HttpStatusCode.Forbidden, "No se permite modificar un dispositivo una vez creado.");
+            try
+            {
+                int id_dispositivo = datos.id_dispositivo;
+                var db = new DataBaseHelper();
+
+                var campos = new Dictionary<string, object>();
+
+                // Solo agrega los campos que vienen en el body
+                if (datos.descripcion != null)
+                    campos["descripcion"] = (string)datos.descripcion;
+                if (datos.foto != null)
+                    campos["foto"] = (string)datos.foto;
+                if (datos.costo != null)
+                    campos["costo"] = (decimal)datos.costo;
+
+                if (campos.Count == 0)
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, "No se enviaron campos para modificar.");
+
+                bool actualizado = db.UpdateRow("DISPOSITIVOS", campos, $"id_dispositivo={id_dispositivo}");
+                if (actualizado)
+                    return Request.CreateResponse(HttpStatusCode.OK, "Componente modificado correctamente.");
+                else
+                    return Request.CreateResponse(HttpStatusCode.NotFound, "No se encontró el componente.");
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, ex.Message);
+            }
         }
+
 
         [HttpDelete]
         [Route("Eliminar")]
@@ -171,12 +198,10 @@ namespace AppWeb.Controllers.ApiBD
             try
             {
                 var db = new DataBaseHelper();
-                // Verificar si hay préstamos activos (fechaRegreso es NULL)
+                // Verificar si hay préstamos activos (fecha_regreso es NULL)
                 var dt = db.SelectTable($@"
                     SELECT 1 FROM PRESTAMOS 
-                    WHERE id_prestamo IN (
-                        SELECT id_prestamo FROM PRESTAMOS_DISPOSITIVOS WHERE id_dispositivo = {id}
-                    ) AND fechaRegreso IS NULL
+                    WHERE id_dispositivo = {id} AND fecha_regreso IS NULL
                 ");
                 if (dt.Rows.Count > 0)
                 {

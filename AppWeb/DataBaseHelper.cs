@@ -58,6 +58,34 @@ public class DataBaseHelper
         }
         return existe;
     }
+    public int InsertRowReturnId(string tableName, Dictionary<string, object> data)
+    {
+        if (string.IsNullOrWhiteSpace(tableName) || data == null || data.Count == 0)
+            return -1;
+
+        var columns = string.Join(",", data.Keys.Select(k => $"`{k}`"));
+        var parameters = string.Join(",", data.Keys.Select(k => "@" + k));
+        var query = $"INSERT INTO `{tableName}` ({columns}) VALUES ({parameters}); SELECT LAST_INSERT_ID();";
+
+        try
+        {
+            using (var con = new MySqlConnection(connectionString))
+            using (var cmd = new MySqlCommand(query, con))
+            {
+                foreach (var item in data)
+                    cmd.Parameters.AddWithValue("@" + item.Key, item.Value ?? DBNull.Value);
+
+                con.Open();
+                var result = cmd.ExecuteScalar();
+                return Convert.ToInt32(result);
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("❌ Error en InsertRowReturnId: " + ex.Message);
+            return -1;
+        }
+    }
 
     // ➕ Insertar fila usando diccionario
     public bool InsertRow(string tableName, Dictionary<string, object> data)

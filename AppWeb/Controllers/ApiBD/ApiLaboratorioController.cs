@@ -20,10 +20,10 @@ namespace AppWeb.Controllers.ApiBD
                     L.id_laboratorio AS Id, 
                     L.nombre AS Nombre, 
                     L.descripcion, 
-                    U.nombre AS Responsable,
-                    U.id_usuario ResponsableId
+                    U.nom_usuario AS Responsable,
+                    U.id_usuario AS ResponsableId
                 FROM LABORATORIOS L
-                LEFT JOIN USUARIOS U ON L.id_responsable = U.id_usuario
+                LEFT JOIN USUARIO U ON L.id_responsable = U.id_usuario
             ");
             var lista = new List<object>();
             foreach (DataRow row in dt.Rows)
@@ -33,7 +33,8 @@ namespace AppWeb.Controllers.ApiBD
                     Id = row["Id"].ToString(),
                     nombre = row["Nombre"].ToString(),
                     descripcion = row["descripcion"].ToString(),
-                    Responsable = row["Responsable"]?.ToString()
+                    Responsable = row["Responsable"]?.ToString(),
+                    ResponsableId = row["ResponsableId"]?.ToString()
                 });
             }
             return Request.CreateResponse(HttpStatusCode.OK, lista);
@@ -149,13 +150,14 @@ namespace AppWeb.Controllers.ApiBD
         }
 
         [HttpGet]
-        [Route("ObtenerProfesoresOEmpleados")]
-        public HttpResponseMessage ObtenerProfesoresOEmpleados()
+        [Route("ObtenerResponsables")]
+        public HttpResponseMessage ObtenerResponsables()
         {
             try
             {
                 var db = new DataBaseHelper();
-                var dt = db.SelectTable("SELECT id_usuario ID, nombre Nombre, rol Rol FROM USUARIOS WHERE rol IN ('profesor', 'empleado');");
+                // Solo roles válidos según la nueva BD: 'admin', 'empleado'
+                var dt = db.SelectTable("SELECT id_usuario ID, nom_usuario Nombre, rol Rol FROM USUARIO WHERE rol IN ('admin', 'empleado');");
                 var lista = new List<object>();
                 foreach (DataRow row in dt.Rows)
                 {
@@ -175,8 +177,8 @@ namespace AppWeb.Controllers.ApiBD
         }
 
         [HttpGet]
-        [Route("ObtenerPorLaboratorio")]
-        public HttpResponseMessage ObtenerPorLaboratorio(int idLaboratorio)
+        [Route("ObtenerProyectosPorLaboratorio")]
+        public HttpResponseMessage ObtenerProyectosPorLaboratorio(int idLaboratorio)
         {
             try
             {
@@ -186,9 +188,9 @@ namespace AppWeb.Controllers.ApiBD
                         P.id_proyecto, 
                         P.nombrep AS Nombre, 
                         P.descripcion AS Descripcion, 
-                        U.nombre AS Responsable
+                        U.nom_usuario AS Responsable
                     FROM PROYECTOS P
-                    LEFT JOIN USUARIOS U ON P.id_responsable = U.id_usuario
+                    LEFT JOIN USUARIO U ON P.id_responsable = U.id_usuario
                     WHERE P.id_laboratorio = {idLaboratorio}
                 ");
                 var lista = new List<object>();

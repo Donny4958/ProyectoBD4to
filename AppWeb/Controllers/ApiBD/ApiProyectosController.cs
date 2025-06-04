@@ -21,9 +21,9 @@ namespace AppWeb.Controllers.ApiBD
                     P.nombrep, 
                     P.descripcion, 
                     P.id_responsable,
-                    U.Nombre AS nombre_responsable
+                    U.nom_usuario AS nombre_responsable
                 FROM PROYECTOS P
-                LEFT JOIN USUARIOS U ON P.id_responsable = U.id_usuario
+                LEFT JOIN USUARIO U ON P.id_responsable = U.id_usuario
             ");
             var lista = new List<object>();
             foreach (DataRow row in dt.Rows)
@@ -51,9 +51,9 @@ namespace AppWeb.Controllers.ApiBD
                     P.nombrep, 
                     P.descripcion, 
                     P.id_responsable,
-                    U.Nombre AS nombre_responsable
+                    U.nom_usuario AS nombre_responsable
                 FROM PROYECTOS P
-                LEFT JOIN USUARIOS U ON P.id_responsable = U.id_usuario
+                LEFT JOIN USUARIO U ON P.id_responsable = U.id_usuario
                 WHERE P.id_proyecto = {id}
             ");
             if (dt.Rows.Count == 1)
@@ -162,9 +162,9 @@ namespace AppWeb.Controllers.ApiBD
         {
             var db = new DataBaseHelper();
             var dt = db.SelectTable($@"
-                SELECT U.id_usuario, U.Nombre, U.correo, U.rol
+                SELECT U.id_usuario, U.nom_usuario, U.correo, U.rol
                 FROM PROYECTO_USUARIO PU
-                INNER JOIN USUARIOS U ON PU.id_usuario = U.id_usuario
+                INNER JOIN USUARIO U ON PU.id_usuario = U.id_usuario
                 WHERE PU.id_proyecto = {idProyecto}
             ");
             var lista = new List<object>();
@@ -173,7 +173,7 @@ namespace AppWeb.Controllers.ApiBD
                 lista.Add(new
                 {
                     id_usuario = row["id_usuario"],
-                    nombre = row["Nombre"],
+                    nombre = row["nom_usuario"],
                     correo = row["correo"],
                     rol = row["rol"]
                 });

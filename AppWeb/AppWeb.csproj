@@ -289,7 +289,9 @@
     </Compile>
     <Compile Include="App_Start\RouteConfig.cs" />
     <Content Include="Componentes.aspx" />
+    <Compile Include="Controllers\ApiBD\ApiAlertasController.cs" />
     <Compile Include="Controllers\ApiBD\ApiDispositivosController.cs" />
+    <Compile Include="Controllers\ApiBD\ApiPrestamosController.cs" />
     <Compile Include="Controllers\ApiBD\ApiProyectosController.cs" />
     <Compile Include="Controllers\ApiBD\ApiLaboratorioController.cs" />
     <Compile Include="Controllers\ApiBD\ApiUsuariosController.cs" />

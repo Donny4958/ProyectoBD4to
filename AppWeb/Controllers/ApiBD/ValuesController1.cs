@@ -77,8 +77,7 @@ namespace AppWeb.Controllers.ApiBD
                     return Request.CreateResponse(HttpStatusCode.BadRequest, "Datos incompletos");
 
                 var db = new DataBaseHelper();
-                var dt = db.SelectTable($"select * from USUARIOS where correo='{Correo}'");
-                var Confirmar = Hash(password);
+                var dt = db.SelectTable($"select * from USUARIO U inner join TIPO_USUARIO TP on U.id_usuario=TP.id_usuario where login=1 and correo='{Correo}'; ");
                 if (dt.Rows.Count == 1)
                 {
                     string hash = dt.Rows[0]["password"].ToString();
@@ -89,8 +88,8 @@ namespace AppWeb.Controllers.ApiBD
                         {
                             logueado = true,
                             ID = dt.Rows[0]["id_usuario"].ToString(),
-                            tipo = dt.Rows[0]["puede_autorizar"].ToString() == "1",
-                            nombre = dt.Rows[0]["Nombre"].ToString()
+                            tipo = dt.Rows[0]["Autoriza"].ToString() == "1",
+                            nombre = dt.Rows[0]["nom_usuario"].ToString()
                         };
                         return Request.CreateResponse(HttpStatusCode.OK, result);
                     }
@@ -113,142 +112,8 @@ namespace AppWeb.Controllers.ApiBD
 
 
 
-        [HttpPost]
-        [Route("ObtenerUsuarioInfo")]
-        public HttpResponseMessage ObtenerUsuarioInfo([FromBody] object var)
-        {
-            // Deserializa el objeto dinámicamente
-            dynamic datos = var;
-            string tipo = datos.tipo;
-            string id = datos.id;
+       
 
-            var db = new DataBaseHelper();
-            if (tipo == "alumno")
-            {
-                var dt = db.SelectTable($"SELECT nombre, matricula, foto FROM Alumno WHERE matricula='{id}'");
-                if (dt.Rows.Count == 1)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new
-                    {
-                        nombre = dt.Rows[0]["nombre"].ToString(),
-                        matricula = dt.Rows[0]["matricula"].ToString(),
-                        foto = dt.Rows[0]["foto"].ToString()
-                    });
-                }
-            }
-            else if (tipo == "empleado")
-            {
-                var dt = db.SelectTable($"SELECT nombre, num_empleado, tipo_empleado, foto FROM empleado WHERE id_empleado='{id}'");
-                if (dt.Rows.Count == 1)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new
-                    {
-                        nombre = dt.Rows[0]["nombre"].ToString(),
-                        num_empleado = dt.Rows[0]["num_empleado"].ToString(),
-                        tipo_empleado = dt.Rows[0]["tipo_empleado"].ToString(),
-                        foto = dt.Rows[0]["foto"].ToString()
-                    });
-                }
-            }
-            return Request.CreateResponse(HttpStatusCode.NotFound, "Usuario no encontrado");
-        }
-
-        [HttpPost]
-        [Route("RegistrarPersona")]
-        public async Task<HttpResponseMessage> RegistrarPersona([FromBody] dynamic datos)
-        {
-            try
-            {
-                string tipo = datos.TipoUsuario;
-                string Pass= datos.Password;
-                if (tipo == "alumno")
-                {
-                    string nombre = datos.Nombre;
-                    string matricula = datos.Matricula;
-                    string foto = datos.Foto;
-
-                    // Validaciones básicas
-                    if (string.IsNullOrEmpty(nombre) || string.IsNullOrEmpty(matricula) || string.IsNullOrEmpty(foto))
-                        return Request.CreateResponse(HttpStatusCode.BadRequest, "Datos incompletos");
-
-                    var db = new DataBaseHelper();
-                    // Verifica si ya existe la matrícula
-                    bool existe = db.Exists($"SELECT 1 FROM Alumno WHERE matricula='{matricula}'");
-                    if (existe)
-                        return Request.CreateResponse(HttpStatusCode.Conflict, "La matrícula ya existe");
-                    string Contra = Hash(Pass);
-                    var data = new Dictionary<string, object>
-            {
-                { "nombre", nombre },
-                { "matricula", matricula },
-                { "foto", foto },
-                { "Pass", Contra }
-            };
-                    bool insertado = db.InsertRow("Alumno", data);
-                    if (insertado)
-                        return Request.CreateResponse(HttpStatusCode.OK, "Alumno registrado");
-                    else
-                        return Request.CreateResponse(HttpStatusCode.InternalServerError, "Error al registrar alumno");
-                }
-                else if (tipo == "empleado")
-                {
-                    string nombre = datos.Nombre;
-                    string numEmpleado = datos.NumEmpleado;
-                    string tipoEmpleado = datos.TipoEmpleado;
-                    string foto = datos.Foto;
-
-                    if (string.IsNullOrEmpty(nombre) || string.IsNullOrEmpty(numEmpleado) || string.IsNullOrEmpty(tipoEmpleado) || string.IsNullOrEmpty(foto))
-                        return Request.CreateResponse(HttpStatusCode.BadRequest, "Datos incompletos");
-
-                    var db = new DataBaseHelper();
-                    // Verifica si ya existe el número de empleado
-                    bool existe = db.Exists($"SELECT 1 FROM empleado WHERE num_empleado='{numEmpleado}'");
-                    if (existe)
-                        return Request.CreateResponse(HttpStatusCode.Conflict, "El número de empleado ya existe");
-                    string Contra = Hash(Pass);
-                    var data = new Dictionary<string, object>
-            {
-                { "nombre", nombre },
-                { "num_empleado", numEmpleado },
-                { "tipo_empleado", tipoEmpleado },
-                { "foto", foto },
-                { "Pass", Contra }
-            };
-                    bool insertado = db.InsertRow("empleado", data);
-                    if (insertado)
-                        return Request.CreateResponse(HttpStatusCode.OK, "Empleado registrado");
-                    else
-                        return Request.CreateResponse(HttpStatusCode.InternalServerError, "Error al registrar empleado");
-                }
-                else
-                {
-                    return Request.CreateResponse(HttpStatusCode.BadRequest, "Tipo de usuario no válido");
-                }
-            }
-            catch (Exception ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.InternalServerError, ex.Message);
-            }
-        }
-
-        public static string Hash(string textoPlano)
-        {
-            byte[] salt;
-            byte[] buffer;
-            if (textoPlano == null)
-            {
-                throw new ArgumentException(nameof(textoPlano));
-            }
-            using (Rfc2898DeriveBytes bytes = new Rfc2898DeriveBytes(textoPlano, 16, 1000))
-            {
-                salt = bytes.Salt;
-                buffer = bytes.GetBytes(32);
-            }
-            byte[] dst = new byte[49];
-            Buffer.BlockCopy(salt, 0, dst, 1, 16);
-            Buffer.BlockCopy(buffer, 0, dst, 17, 32);
-            return Convert.ToBase64String(dst);
-        }
 
 
         public static bool VerifyHashedPassword(string hashedPassword, string Password)
@@ -279,19 +144,4 @@ namespace AppWeb.Controllers.ApiBD
         }
     }
 
-}
-public class Usuario
-{
-    public string Nombre { get; set; }
-    public string Correo { get; set; }
-    public string Contrasena{ get; set; }
-    public string ContrasenaHash { get; set; }
-    public string Moneda { get; set; }
-    public string Lenguaje { get; set; }
-    
-}
-public class Respuesta
-{
-    public string Mensaje { get; set; }
-    public int Codigo { get; set; }
 }
