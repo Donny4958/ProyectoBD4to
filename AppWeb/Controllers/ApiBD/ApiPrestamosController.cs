@@ -40,16 +40,21 @@ namespace AppWeb.Controllers.ApiBD
 
         [HttpGet]
         [Route("Revisar")]
-        public IHttpActionResult RevisarPrestamos([FromUri] string estado = null, [FromUri] string tipo = null, [FromUri] string Expirado = null)
+        public IHttpActionResult RevisarPrestamos(
+    [FromUri] string estado = null,
+    [FromUri] string tipo = null,
+    [FromUri] string Expirado = null,
+    [FromUri] string fechaRegreso = null // Nuevo parámetro
+)
         {
             var db = new DataBaseHelper();
             var query = @"
-                SELECT p.*, u.nom_usuario, d.nombre AS dispositivo_nombre
-                FROM PRESTAMOS p
-                JOIN USUARIO u ON p.id_usuario_prestamo = u.id_usuario
-                JOIN DISPOSITIVOS d ON p.id_dispositivo = d.id_dispositivo
-                WHERE 1=1
-            ";
+        SELECT p.*, u.nom_usuario, d.nombre AS dispositivo_nombre
+        FROM PRESTAMOS p
+        JOIN USUARIO u ON p.id_usuario_prestamo = u.id_usuario
+        JOIN DISPOSITIVOS d ON p.id_dispositivo = d.id_dispositivo
+        WHERE 1=1
+    ";
 
             if (!string.IsNullOrEmpty(estado))
             {
@@ -70,6 +75,11 @@ namespace AppWeb.Controllers.ApiBD
             {
                 var hoy = DateTime.Now.Date.ToString("yyyy-MM-dd");
                 query += $" AND p.fecha_estimada < '{hoy}' AND p.fecha_regreso IS NULL";
+            }
+            if (!string.IsNullOrEmpty(fechaRegreso))
+            {
+                // Filtra por fecha exacta de regreso (formato yyyy-MM-dd)
+                query += $" AND CONVERT(varchar(10), p.fecha_regreso, 23) = '{fechaRegreso}'";
             }
 
             var dt = db.SelectTable(query);
@@ -92,6 +102,7 @@ namespace AppWeb.Controllers.ApiBD
             }
             return Ok(lista);
         }
+
 
         [HttpPut]
         [Route("Aceptar/{id_prestamo:int}")]

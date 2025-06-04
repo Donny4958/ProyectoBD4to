@@ -4,13 +4,13 @@
 <script src="https://cdn.datatables.net/2.3.1/js/dataTables.js"></script>
 <h2>Préstamos</h2>
 
-<!-- Filtros con checkbox -->
+<!-- Filtros rápidos -->
 <div style="margin-bottom:15px;">
-    <label><input type="checkbox" id="chkPendiente" checked /> Pendientes</label>
-    <label style="margin-left:10px;"><input type="checkbox" id="chkExpirado" /> Expirados</label>
-    <label style="margin-left:20px;"><input type="checkbox" id="chkInterno" checked /> Interno</label>
-    <label style="margin-left:10px;"><input type="checkbox" id="chkExterno" checked /> Externo</label>
-    <button type="button" onclick="abrirModalPrestamo()" style="margin-left:20px;">Pedir préstamo</button>
+    <button type="button" class="btn btn-info" onclick="filtrarPrestamos('interno')">Préstamos internos activos</button>
+    <button type="button" class="btn btn-secondary" onclick="filtrarPrestamos('')">Todos los prestamos</button>
+    <button type="button" class="btn btn-warning" onclick="filtrarPrestamos('externo')">Préstamos externos activos</button>
+    <button type="button" class="btn btn-danger" onclick="filtrarPrestamos('vencidos')">Préstamos vencidos</button>
+    <button type="button" class="btn btn-success" onclick="abrirModalPrestamo()" style="margin-left:20px;">Pedir préstamo</button>
 </div>
 
 <!-- Modal para pedir préstamo -->
@@ -75,18 +75,15 @@
     let tablaPrestamos;
     let usuarios = [];
     let dispositivos = [];
+    let filtroActual = 'interno';
 
     document.addEventListener("DOMContentLoaded", function () {
         cargarUsuariosYDispositivos();
         inicializarTabla();
-        document.getElementById("chkPendiente").addEventListener("change", recargarTablaPrestamos);
-        document.getElementById("chkExpirado").addEventListener("change", recargarTablaPrestamos);
-        document.getElementById("chkInterno").addEventListener("change", recargarTablaPrestamos);
-        document.getElementById("chkExterno").addEventListener("change", recargarTablaPrestamos);
+        filtrarPrestamos('interno'); // Por defecto, internos activos
     });
 
     function cargarUsuariosYDispositivos() {
-        // Cargar usuarios
         fetch('/api/Usuarios/ObtenerTodos')
             .then(r => r.json())
             .then(data => {
@@ -99,7 +96,6 @@
                     });
                 });
             });
-        // Cargar dispositivos
         fetch('/api/Dispositivos/ObtenerTodos')
             .then(r => r.json())
             .then(data => {
@@ -118,21 +114,15 @@
                 url: '/api/Prestamos/Revisar',
                 dataSrc: function (json) { return json; },
                 data: function (d) {
-                    // Estado
-                    const pendiente = document.getElementById("chkPendiente").checked;
-                    const expirado = document.getElementById("chkExpirado").checked;
-                    if (pendiente && !expirado) d.estado = "activo";
-                    else if (!pendiente && !expirado) d.estado = "inactivo";
-                    else if (!pendiente && expirado) d.Expirado = "1";
-                    else if (pendiente && expirado) {
+                    if (filtroActual === 'interno') {
                         d.estado = "activo";
+                        d.tipo = "interno";
+                    } else if (filtroActual === 'externo') {
+                        d.estado = "activo";
+                        d.tipo = "externo";
+                    } else if (filtroActual === 'vencidos') {
                         d.Expirado = "1";
                     }
-                    // Tipo
-                    const interno = document.getElementById("chkInterno").checked;
-                    const externo = document.getElementById("chkExterno").checked;
-                    if (interno && !externo) d.tipo = "interno";
-                    else if (!interno && externo) d.tipo = "externo";
                 }
             },
             columns: [
@@ -164,7 +154,8 @@
         });
     }
 
-    function recargarTablaPrestamos() {
+    function filtrarPrestamos(tipo) {
+        filtroActual = tipo;
         tablaPrestamos.ajax.reload();
     }
 
@@ -204,12 +195,11 @@
             .then(msg => {
                 alert(msg);
                 cerrarModalPrestamo();
-                recargarTablaPrestamos();
+                tablaPrestamos.ajax.reload();
             })
             .catch(error => alert(error.message));
     }
 
-    // Aceptar préstamo
     function abrirModalAceptar(id_prestamo) {
         document.getElementById("aceptar_id_prestamo").value = id_prestamo;
         document.getElementById("modalAceptar").style.display = "block";
@@ -235,7 +225,7 @@
             .then(msg => {
                 alert(msg);
                 cerrarModalAceptar();
-                recargarTablaPrestamos();
+                tablaPrestamos.ajax.reload();
             })
             .catch(error => alert(error.message));
     }
@@ -248,12 +238,11 @@
             .then(response => response.ok ? response.text() : response.text().then(msg => { throw new Error(msg); }))
             .then(msg => {
                 alert(msg);
-                recargarTablaPrestamos();
+                tablaPrestamos.ajax.reload();
             })
             .catch(error => alert(error.message));
     }
 
-    // Modal imagen (si lo necesitas)
     function mostrarModalImagen(base64) {
         document.getElementById('imgModalGrande').src = 'data:image/png;base64,' + base64;
         document.getElementById('modalImagen').style.display = 'flex';
